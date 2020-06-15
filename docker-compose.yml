@@ -1,0 +1,63 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres:alpine'
+    environment:
+      - POSTGRES_PASSWORD=pg_password
+  
+  redis:
+    image: 'redis:alpine'
+  
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./api
+    volumes: 
+      - /app/node_modules
+      - ./api:/app
+    environment: 
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PG_USER=postgres
+      - PG_HOST=postgres
+      - PG_DATABASE=postgres
+      - PG_PASSWORD=pg_password
+      - PG_PORT=5432
+    depends_on:
+      - postgres
+      - redis
+
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes: 
+      - /app/node_modules
+      - ./client:/app
+    depends_on:
+      - api
+    stdin_open: true
+
+  worker:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes: 
+      - /app/node_modules
+      - ./worker:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+  
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports: 
+      - '8080:80'
+    depends_on:
+      - api
+      - client
