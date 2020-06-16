@@ -25,9 +25,7 @@ class Fib extends Component {
 
     handleSubmit = async (event) => {
         event.preventDefault();
-
         await axios.post('/api/values', {index: this.state.index});
-
         this.setState({index: ''});
     };
 
@@ -47,7 +45,6 @@ class Fib extends Component {
         }
 
         return entries;
-
     }
 
     render() {
@@ -67,7 +64,6 @@ class Fib extends Component {
 
                 <h3>Results</h3>
                 {this.renderValues()}
-
             </div>
         );
     }

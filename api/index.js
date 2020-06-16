@@ -19,7 +19,7 @@ const pgClient = new Pool({
     port: keys.pgPort
 });
 
-pgClient.on('error', () => console.log('Lost PG connection'));
+pgClient.on('error', () => console.log('Lost Postgres connection'));
 
 pgClient
     .query('CREATE TABLE IF NOT EXISTS values (number INT)')
@@ -64,6 +64,7 @@ app.post('/values', async (req, res) => {
     res.send({working: true});
 });
 
+//Express instantiation
 app.listen(5000, err => {
-    console.log('Listening...');
+    console.log('Client listening...');
 });

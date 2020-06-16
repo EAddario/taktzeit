@@ -9,9 +9,9 @@ const redisClient = redis.createClient({
 
 const redisSubscriber = redisClient.duplicate();
 
+//Inefficient Fibonacci algorithm used on purpose to simulate different workloads
 function fib(index) {
     if (index < 2) return 1;
-
     return (fib(index - 1) + fib(index - 2));
 }
 
