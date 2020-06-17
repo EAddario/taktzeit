@@ -16,7 +16,10 @@ function fib(index) {
 }
 
 redisSubscriber.on('message', (channel, message) => {
+    const time = process.hrtime();
     redisClient.hset('values', message, fib(parseInt(message)));
+    const diff = process.hrtime(time);
+    console.log(`Computed Fibonacci for index ${message} in ${diff[0]}s ${diff[1] / 1000000}ms`);
 });
 
 redisSubscriber.subscribe('insert');
