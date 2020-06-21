@@ -36,7 +36,7 @@ const redisPublisher = redisClient.duplicate();
 
 //Express route handlers
 app.get('/', (req, res) => {
-    res.send('Running...');
+    res.send('API Running...');
 });
 
 app.get('/values/all', async (req, res) => {
@@ -51,9 +51,9 @@ app.get('/values/current', async (req, res) => {
 });
 
 app.post('/values', async (req, res) => {
-    const index = req.body.index;
+    const index = parseInt(req.body.index);
 
-    if (parseInt(index) > 50) {
+    if (!(Number.isInteger(index)) || (index > 50)) {
         return res.status(422).send('Index too high');
     }
 
@@ -66,5 +66,5 @@ app.post('/values', async (req, res) => {
 
 //Express instantiation
 app.listen(5000, err => {
-    console.log('Client listening...');
+    console.log('API listening...');
 });
