@@ -12,9 +12,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./api
-    volumes: 
-      - /app/node_modules
-      - ./api:/app
     environment: 
       - REDIS_HOST=redis
       - REDIS_PORT=6379
@@ -22,7 +19,7 @@ services:
       - POSTGRES_HOST=postgres
       - POSTGRES_DATABASE=postgres
       - POSTGRES_PASSWORD=pg_password
-      - PG_PORT=5432
+      - POSTGRES_PORT=5432
     depends_on:
       - postgres
       - redis
@@ -31,9 +28,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./client
-    volumes: 
-      - /app/node_modules
-      - ./client:/app
     depends_on:
       - api
     stdin_open: true
@@ -42,9 +36,6 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./worker
-    volumes: 
-      - /app/node_modules
-      - ./worker:/app
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
