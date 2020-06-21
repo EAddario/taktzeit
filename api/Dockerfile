@@ -1,5 +1,10 @@
 FROM node:alpine
-WORKDIR /app
+RUN apk update && \
+    apk upgrade && \
+    adduser --disabled-password --shell /bin/ash --ingroup users user
+EXPOSE 5000
+USER user
+WORKDIR /home/user
 COPY ./package.json ./
 RUN npm install
 COPY . .
