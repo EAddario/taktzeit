@@ -1,6 +1,7 @@
 FROM node:alpine
 RUN apk update && \
     apk upgrade && \
+    rm -rf /var/cache/apk/* && \
     adduser --disabled-password --shell /bin/ash --ingroup users user
 EXPOSE 3000
 USER user
