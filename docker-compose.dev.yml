@@ -1,62 +1,85 @@
 version: '3'
 services:
+  rabbitmq:
+    image: 'rabbitmq:management-alpine'
+    ports:
+      - 15672:15672
+    healthcheck:
+      test: nc -z localhost 5672 || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 4
+
+  redis:
+    image: 'redis:alpine'
+
   postgres:
     image: 'postgres:alpine'
     environment:
       - POSTGRES_PASSWORD=pg_password
-  
-  redis:
-    image: 'redis:alpine'
-  
-  api:
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./api
-    volumes: 
-      - /app/node_modules
-      - ./api:/app
-    environment: 
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - POSTGRES_USER=postgres
-      - POSTGRES_HOST=postgres
-      - POSTGRES_DATABASE=postgres
-      - POSTGRES_PASSWORD=pg_password
-      - POSTGRES_PORT=5432
-    depends_on:
-      - postgres
-      - redis
-
-  client:
-    build:
-      dockerfile: Dockerfile.dev
-      context: ./client
-    volumes: 
-      - /app/node_modules
-      - ./client:/app
-    depends_on:
-      - api
-    stdin_open: true
 
   worker:
     build:
       dockerfile: Dockerfile.dev
       context: ./worker
-    volumes: 
+    volumes:
       - /app/node_modules
       - ./worker:/app
     environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
+      - rabbitmq
       - redis
-  
+    restart: on-failure
+
+  api:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./api
+    volumes:
+      - /app/node_modules
+      - ./api:/app
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DATABASE=postgres
+      - POSTGRES_PASSWORD=pg_password
+      - POSTGRES_PORT=5432
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - rabbitmq
+      - redis
+      - postgres
+    restart: on-failure
+
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    depends_on:
+      - api
+    stdin_open: true
+    restart: on-failure
+
   nginx:
     restart: always
     build:
       dockerfile: Dockerfile.dev
       context: ./nginx
-    ports: 
+    ports:
       - '8080:80'
     depends_on:
       - api

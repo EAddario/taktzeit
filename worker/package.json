@@ -1,10 +1,12 @@
 {
-    "dependencies": {
-        "nodemon": "^2.0.4",
-        "redis": "^3.0.2"
-    },
-    "scripts": {
-        "start": "node index.js",
-        "dev": "nodemon"
-    }
+  "dependencies": {
+    "nodemon": "^2.0.4",
+    "redis": "^3.0.2",
+    "rascal": "^10.0.1",
+    "amqplib": "^0.5.6"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon"
+  }
 }

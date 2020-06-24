@@ -1,18 +1,47 @@
 version: '3'
 services:
+
+  rabbitmq:
+    image: 'rabbitmq:alpine'
+    healthcheck:
+      test: nc -z localhost 5672 || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 4
+
+  redis:
+    image: 'redis:alpine'
+
   postgres:
     image: 'postgres:alpine'
     environment:
       - POSTGRES_PASSWORD=pg_password
-  
-  redis:
-    image: 'redis:alpine'
-  
+
+  worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./worker
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+      - rabbitmq
+    restart: on-failure
+
   api:
     build:
       dockerfile: Dockerfile
       context: ./api
     environment: 
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - POSTGRES_USER=postgres
@@ -23,6 +52,8 @@ services:
     depends_on:
       - postgres
       - redis
+      - rabbitmq
+    restart: on-failure
 
   client:
     build:
@@ -31,16 +62,7 @@ services:
     depends_on:
       - api
     stdin_open: true
-
-  worker:
-    build:
-      dockerfile: Dockerfile
-      context: ./worker
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-    depends_on:
-      - redis
+    restart: on-failure
   
   nginx:
     restart: always
