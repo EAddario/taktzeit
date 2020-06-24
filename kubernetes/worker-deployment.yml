@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: worker
+  template:
+    metadata:
+      labels:
+        component: worker
+    spec:
+      containers:
+      - name: worker
+        image: edaddario/worker
+        env:
+          - name: RABBITMQ_HOST
+            value: rabbitmq-cluster-ip
+          - name: RABBITMQ_PORT
+            value: "5672"
+          - name: RABBITMQ_USER
+            value: guest
+          - name: RABBITMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: vault
+                key: RABBITMQ_PASSWORD
+          - name: REDIS_HOST
+            value: redis-cluster-ip
+          - name: REDIS_PORT
+            value: "6379"
+        resources:
+            limits:
+              cpu: "1"

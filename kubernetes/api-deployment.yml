@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: api
+  template:
+    metadata:
+      labels:
+        component: api
+    spec:
+      containers:
+      - name: api
+        image: edaddario/api
+        ports:
+        - containerPort: 5000
+        env:
+          - name: RABBITMQ_HOST
+            value: rabbitmq-cluster-ip
+          - name: RABBITMQ_PORT
+            value: "5672"
+          - name: RABBITMQ_USER
+            value: guest
+          - name: RABBITMQ_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: vault
+                key: RABBITMQ_PASSWORD
+          - name: REDIS_HOST
+            value: redis-cluster-ip
+          - name: REDIS_PORT
+            value: "6379"
+          - name: POSTGRES_USER
+            value: postgres
+          - name: POSTGRES_HOST
+            value: postgres-cluster-ip
+          - name: POSTGRES_PORT
+            value: "5432"
+          - name: POSTGRES_DATABASE
+            value: postgres
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: vault
+                key: POSTGRES_PASSWORD
