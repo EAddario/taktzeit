@@ -1,0 +1,27 @@
+#!/bin/zsh
+echo -e "\n$fg_bold[red]Delete ingress service$reset_color"
+kubectl delete -f ingress-service.yml
+echo -e "\n$fg_bold[red]Delete CLIENT component$reset_color"
+kubectl delete -f client-cluster-ip.yml -f client-deployment.yml
+echo -e "\n$fg_bold[red]Delete API component$reset_color"
+kubectl delete -f api-cluster-ip.yml -f api-deployment.yml
+echo -e "\n$fg_bold[red]Delete WORKER horizontal pod autoscaler$reset_color"
+kubectl delete -f worker-hpa.yml
+echo -e "\n$fg_bold[red]Delete WORKER component$reset_color"
+kubectl delete -f worker-deployment.yml
+echo -e "\n$fg_bold[red]Delete Postgres$reset_color"
+kubectl delete -f postgres-cluster-ip.yml -f postgres-deployment.yml
+echo -e "\n$fg_bold[yellow]Delete Peristent Volume Claim? (y/n)$reset_color"
+read ANSWER
+
+if [[ $ANSWER = "y" ]]
+then
+  echo -e "\n$fg_bold[red]Deleting Peristent Volume Claim$reset_color"
+  kubectl delete -f database-pvc.yml
+fi
+
+echo -e "\n$fg_bold[red]Delete RabbitMQ$reset_color"
+kubectl delete -f rabbitmq-cluster-ip.yml -f rabbitmq-deployment.yml
+echo -e "\n$fg_bold[red]Delete Redis$reset_color"
+kubectl delete -f redis-cluster-ip.yml -f redis-deployment.yml
+echo -e "\n$fg_bold[red]Finished destroying cloud native system$reset_color\n"
