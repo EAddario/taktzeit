@@ -4,19 +4,4 @@ Simple playground to PoC scalable cloud patterns
 
 ## System Architecture
 
-```mermaid
-graph LR
-A(Ingress)  -->|nginx| B(Client)
-B -->|proxy| C{API}
-C --> G
-G[Redis] -.-> C
-C --> I[Postgres]
-I -.-> C
-C --> H[RabbitMQ]
-H -->D(Worker 1)
-D --> G
-H -->E(Worker n-1)
-E --> G
-H -->F(Worker n)
-F --> G
-```
+![High Level Architecture](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFJcbkEoSW5ncmVzcykgIC0tPnxuZ2lueHwgQihDbGllbnQpXG5CIC0tPnxwcm94eXwgQ3tBUEl9XG5DIC0tPiBHXG5HW1JlZGlzXSAtLi0-IENcbkMgLS0-IElbUG9zdGdyZXNdXG5JIC0uLT4gQ1xuQyAtLT4gSFtSYWJiaXRNUV1cbkggLS0-RChXb3JrZXIgMSlcbkQgLS0-IEdcbkggLS0-RShXb3JrZXIgbi0xKVxuRSAtLT4gR1xuSCAtLT5GKFdvcmtlciBuKVxuRiAtLT4gRyIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
