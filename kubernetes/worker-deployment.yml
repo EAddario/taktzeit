@@ -32,5 +32,6 @@ spec:
           - name: REDIS_PORT
             value: "6379"
         resources:
-            limits:
-              cpu: "1"
+          limits:
+            memory: "64Mi"
+            cpu: "0.5"

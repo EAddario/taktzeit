@@ -9,4 +9,4 @@ spec:
     name: worker-deployment
   maxReplicas: 6
   minReplicas: 1
-  targetCPUUtilizationPercentage: 85
+  targetCPUUtilizationPercentage: 75

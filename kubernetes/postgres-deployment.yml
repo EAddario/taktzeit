@@ -31,3 +31,6 @@ spec:
               secretKeyRef:
                 name: vault
                 key: POSTGRES_PASSWORD
+        resources:
+          limits:
+            memory: "128Mi"
