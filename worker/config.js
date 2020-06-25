@@ -35,7 +35,8 @@ module.exports = {
                 },
                 subscriptions: {
                     worker_sub: {
-                        queue: "worker_queue"
+                        queue: "worker_queue",
+                        "prefetch": 1
                     }
                 }
             }
