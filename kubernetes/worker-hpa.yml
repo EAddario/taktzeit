@@ -7,6 +7,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: worker-deployment
-  maxReplicas: 5
+  maxReplicas: 6
   minReplicas: 1
   targetCPUUtilizationPercentage: 85
