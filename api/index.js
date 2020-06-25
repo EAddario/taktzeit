@@ -30,7 +30,6 @@ const redisClient = redis.createClient({
     port: config.Redis.Port,
     retry_strategy: () => 1000
 })
-//const redisPublisher = redisClient.duplicate()
 
 // RabbitMQ client setup
 const rabbitmq = require('rascal').Broker
@@ -64,7 +63,6 @@ app.post('/values', async (req, res) => {
     }
 
     redisClient.hset('values', index, 'NaN')
-    //redisPublisher.publish('insert', index)
 
     rabbitClient.publish('worker_pub', index, (err, pub) => {
         if (err) throw err
