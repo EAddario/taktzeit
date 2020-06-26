@@ -1,8 +1,22 @@
 #!/bin/zsh
+progress-bar() { # progress-bar: A very nice shell progress bar by https://github.com/edouard-lopez
+  local duration=${1}
+  already_done() { for ((done=0; done<$elapsed; done++)); do printf "▇"; done }
+  remaining() { for ((remain=$elapsed; remain<$duration; remain++)); do printf " "; done }
+  percentage() { printf "| %s%%" $(( (($elapsed)*100)/($duration)*100/100 )); }
+  clean_line() { printf "\r"; }
+
+  for (( elapsed=1; elapsed<=$duration; elapsed++ )); do
+    already_done; remaining; percentage
+    sleep 1
+    clean_line
+  done
+  clean_line
+}
 echo -e "\n$fg_bold[red]Deploying RabbitMQ$reset_color"
 kubectl apply -f rabbitmq-cluster-ip.yml -f rabbitmq-deployment.yml
 echo -e "\n$fg_bold[red]Sleeping 30 sec to allow for RabbitMQ startup$reset_color"
-sleep 30
+progress-bar 30
 echo -e "\n$fg_bold[red]Deploying Redis$reset_color"
 kubectl apply -f redis-cluster-ip.yml -f redis-deployment.yml
 echo -e "\n$fg_bold[red]Creating Peristent Volume Claim $reset_color"
