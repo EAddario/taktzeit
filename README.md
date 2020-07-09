@@ -4,7 +4,7 @@ Simple PoC to demonstrate scalable cloud patterns and advantages of adhering to 
 ## System Behaviour
 Upon entering an integer in the web front-end (*located at http://localhost/ when deployed locally*), the system will calculate the [Fibonacci number](https://en.wikipedia.org/wiki/Fibonacci_number) using an inefficient recursive algorithm running in O(c<sup>n</sup>) time. For a good analysis of other (better) implementations check Ali Dasdan's paper [Twelve Simple Algorithms to Compute Fibonacci Numbers](https://arxiv.org/pdf/1803.07199.pdf).
 
-Values of 40 or less should complete in a few seconds with negligible resource consumption with values approaching 50 taking exponentially longer and taxing more heavily the CPU. Values above 50 are **not** recommended.
+Values of 40 or less should complete in a few seconds with negligible resource consumption, while values approaching 50 will take exponentially longer and tax more heavily the CPU. Values above 50 are **not** recommended.
 
 Although overly simplistic in their implementation, each service is designed to be event-driven, concurrent, stateless, disposable  and capable of significant horizontal scaling. All the system's state is managed by backing services (*PostgreSQL, RabbbitMQ and Redis*).
 
