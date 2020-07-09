@@ -36,7 +36,10 @@ module.exports = {
                 subscriptions: {
                     worker_sub: {
                         queue: "worker_queue",
-                        "prefetch": 1
+                        "prefetch": 1,
+                        options: {
+                            noAck: false
+                        }
                     }
                 }
             }
