@@ -35,7 +35,7 @@ const redisClient = redis.createClient({
 const rabbitmq = require('rascal').Broker
 let rabbitClient
 rabbitmq.create(config.RabbitMQ, (err, _rabbitClient) => {
-    if (err) throw err
+    if (err) throw new Error(`Exception creating broker instance: ${err.message}`)
     rabbitClient = _rabbitClient
 })
 
@@ -59,16 +59,19 @@ app.post('/values', async (req, res) => {
     const index = parseInt(req.body.index)
 
     if (!(Number.isInteger(index)) || (index > 50)) {
+        console.warn(`Index ${index} is too high`)
         return res.status(422).send('Index too high')
     }
 
     redisClient.hset('values', index, 'NaN')
 
     rabbitClient.publish('worker_pub', index, (err, pub) => {
-        if (err) throw err
-        pub.on('error', console.error)
+        if (err) throw new Error(`Exception while publishing: ${err.message}`)
+        pub.on('error', (err) => {
+            console.error(`Error while publishing messages: ${err.message}`)
+        })
     })
-    console.log('Published ' + index)
+    console.log(`Published index ${index}`)
 
     pgClient.query('INSERT INTO values(number) VALUES($1)', [index])
 
