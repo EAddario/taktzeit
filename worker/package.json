@@ -2,7 +2,9 @@
   "dependencies": {
     "nodemon": "^2.0.4",
     "redis": "^3.0.2",
+    "@types/redis": "^2.8.24",
     "rascal": "^10.0.1",
+    "@types/rascal": "^10.0.1",
     "amqplib": "^0.5.6"
   },
   "scripts": {
