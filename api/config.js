@@ -16,10 +16,10 @@ module.exports = {
                     user: process.env.RABBITMQ_USER,
                     password: process.env.RABBITMQ_PASSWORD,
                     options: {
-                        heartbeat: 60
+                        heartbeat: 900
                     },
                     socketOptions: {
-                        timeout: 600
+                        timeout: 1800
                     },
                     retry: {
                         min: 1000,
