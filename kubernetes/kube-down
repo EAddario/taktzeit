@@ -1,19 +1,19 @@
 #!/bin/zsh
 echo -e "\n$fg_bold[red]Delete ingress service$reset_color"
 kubectl delete -f ingress-service.yml
-echo -e "\n$fg_bold[red]Delete CLIENT component$reset_color"
+echo -e "\n$fg_bold[red]Delete CLIENT service$reset_color"
 kubectl delete -f client-cluster-ip.yml -f client-deployment.yml
-echo -e "\n$fg_bold[red]Delete API component$reset_color"
+echo -e "\n$fg_bold[red]Delete API service$reset_color"
 kubectl delete -f api-cluster-ip.yml -f api-deployment.yml
 echo -e "\n$fg_bold[red]Delete WORKER horizontal pod autoscaler$reset_color"
 kubectl delete -f worker-hpa.yml
-echo -e "\n$fg_bold[red]Delete WORKER component$reset_color"
+echo -e "\n$fg_bold[red]Delete WORKER service$reset_color"
 kubectl delete -f worker-deployment.yml
 echo -e "\n$fg_bold[red]Delete Postgres$reset_color"
 kubectl delete -f postgres-cluster-ip.yml -f postgres-deployment.yml
+
 echo -e "\n$fg_bold[yellow]Delete Peristent Volume Claim? (y/n)$reset_color"
 read ANSWER
-
 if [[ $ANSWER = "y" ]]
 then
   echo -e "\n$fg_bold[red]Deleting Peristent Volume Claim$reset_color"

@@ -23,13 +23,20 @@ echo -e "\n$fg_bold[red]Creating Peristent Volume Claim $reset_color"
 kubectl apply -f database-pvc.yml
 echo -e "\n$fg_bold[red]Deploying Postgres$reset_color"
 kubectl apply -f postgres-cluster-ip.yml -f postgres-deployment.yml
-echo -e "\n$fg_bold[red]Deploying WORKER component$reset_color"
+echo -e "\n$fg_bold[red]Deploying WORKER service$reset_color"
 kubectl apply -f worker-deployment.yml
-echo -e "\n$fg_bold[red]Deploying WORKER horizontal pod autoscaler $reset_color"
-kubectl apply -f worker-hpa.yml
-echo -e "\n$fg_bold[red]Deploying API component$reset_color"
+
+echo -e "\n$fg_bold[yellow]Deploy WORKER horizontal pod autoscaler? (y/n)$reset_color"
+read ANSWER
+if [[ $ANSWER = "y" ]]
+then
+  echo -e "\n$fg_bold[red]Deploying WORKER horizontal pod autoscaler $reset_color"
+  kubectl apply -f worker-hpa.yml
+fi
+
+echo -e "\n$fg_bold[red]Deploying API service$reset_color"
 kubectl apply -f api-cluster-ip.yml -f api-deployment.yml
-echo -e "\n$fg_bold[red]Deploying CLIENT component$reset_color"
+echo -e "\n$fg_bold[red]Deploying CLIENT service$reset_color"
 kubectl apply -f client-cluster-ip.yml -f client-deployment.yml
 echo -e "\n$fg_bold[red]Deploying ingress service$reset_color"
 kubectl apply -f ingress-service.yml
