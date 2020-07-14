@@ -1,4 +1,6 @@
 #!/bin/zsh
+autoload colors
+colors
 progress-bar() { # progress-bar: A very nice shell progress bar by https://github.com/edouard-lopez
   local duration=${1}
   already_done() { for ((done=0; done<$elapsed; done++)); do printf "▇"; done }

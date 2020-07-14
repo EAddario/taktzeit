@@ -1,4 +1,6 @@
 #!/bin/zsh
+autoload colors
+colors
 echo -e "\n$fg_bold[red]Delete ingress service$reset_color"
 kubectl delete -f ingress-service.yml
 echo -e "\n$fg_bold[red]Delete CLIENT service$reset_color"
