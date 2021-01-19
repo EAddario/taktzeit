@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-service
@@ -11,9 +11,15 @@ spec:
         paths:
           - path: /?(.*)
             backend:
-              serviceName: client-cluster-ip
-              servicePort: 3000
+              service:
+                name: client-cluster-ip
+                port:
+                  number: 3000
+            pathType: Exact
           - path: /api/?(.*)
             backend:
-                serviceName: api-cluster-ip
-                servicePort: 5000
+                service:
+                  name: api-cluster-ip
+                  port:
+                    number: 5000
+            pathType: Exact
