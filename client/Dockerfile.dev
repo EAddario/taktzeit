@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:14-alpine3.12
 RUN apk update && \
     apk upgrade && \
     rm -rf /var/cache/apk/* && \
