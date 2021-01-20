@@ -8,7 +8,7 @@ Values of 40 or less should complete within seconds with negligible resource con
 
 Although overly simplistic in their implementation, each service is designed to be event-driven, concurrent, stateless, disposable  and capable of significant horizontal scaling. All the system's state is managed by backing services (*PostgreSQL, RabbbitMQ and Redis*).  
 
-When deployed in a Kubernetes cluster, a [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/]) (*HPA*) monitors the Worker's CPU and will create additional instances automatically (*up to 4 in this PoC*) whenever its utilization is above 75% for 15 seconds or more. As the combined Workers' CPU utilization falls below that mark, the HPA will terminate unneeded instances.  
+When deployed in a Kubernetes cluster, a [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/]) (*HPA*) monitors the Worker's CPU and will create additional instances automatically (*up to 4 in this PoC*) whenever its utilization is above 60% for 15 seconds or more. As the combined Workers' CPU utilization falls below that mark, the HPA will terminate unneeded instances.  
 
 The HPA's monitoring interval can be changed by setting the `--horizontal-pod-autoscaler-sync-period` flag in the cluster's default controller manager.  
 
