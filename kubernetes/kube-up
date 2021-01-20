@@ -1,6 +1,7 @@
 #!/bin/zsh
 autoload colors
 colors
+
 progress-bar() { # progress-bar: A very nice shell progress bar by https://github.com/edouard-lopez
   local duration=${1}
   already_done() { for ((done=0; done<$elapsed; done++)); do printf "▇"; done }
@@ -15,6 +16,9 @@ progress-bar() { # progress-bar: A very nice shell progress bar by https://githu
   done
   clean_line
 }
+
+echo -e "\n$fg_bold[red]Deploying Secrets$reset_color"
+kubectl apply -f secrets-vault.yml
 echo -e "\n$fg_bold[red]Deploying RabbitMQ$reset_color"
 kubectl apply -f rabbitmq-cluster-ip.yml -f rabbitmq-deployment.yml
 echo -e "\n$fg_bold[red]Sleeping 30 sec to allow for RabbitMQ startup$reset_color"

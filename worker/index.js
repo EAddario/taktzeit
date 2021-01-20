@@ -25,7 +25,7 @@ Broker.create(config.RabbitMQ, (err, broker) => {
             ackOrNack()
             console.log(`Got message ${content}`)
             const time = process.hrtime()
-            const fib = fibonacci(parseInt(content))
+            const fib = fibonacci(parseInt(content) - 1)
             const diff = process.hrtime(time)
             redisClient.hset('values', content, fib)
             const minutes = Math.floor(diff[0] / 60)
