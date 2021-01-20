@@ -1,17 +1,17 @@
 # Taktzeit
 Simple PoC to demonstrate scalable cloud patterns and advantages of adhering to the [12 Factor App](https://12factor.net/) methodology.  
-  
-## System Behaviour  
+
+## System Behaviour
 Upon entering an integer in the web front-end (*located at http://localhost/ when deployed locally*), the system will calculate the [Fibonacci number](https://en.wikipedia.org/wiki/Fibonacci_number) using an inefficient recursive algorithm running in O(c<sup>n</sup>) time. For a good analysis of other (better) implementations check Ali Dasdan's paper [Twelve Simple Algorithms to Compute Fibonacci Numbers](https://arxiv.org/pdf/1803.07199.pdf).  
-  
-Values of 40 or less should complete in a few seconds with negligible resource consumption, while values approaching 50 will take exponentially longer and tax more heavily the CPU. Values above 50 are **not** recommended.  
-  
+
+Values of 40 or less should complete within seconds with negligible resource consumption, while values approaching 50 will take exponentially longer and tax heavily the CPU. Values above 50 are **not** recommended, and values above 55 are ignored.  
+
 Although overly simplistic in their implementation, each service is designed to be event-driven, concurrent, stateless, disposable  and capable of significant horizontal scaling. All the system's state is managed by backing services (*PostgreSQL, RabbbitMQ and Redis*).  
-  
-When deployed in a Kubernetes cluster, a [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/]) (*HPA*) monitors the Worker's CPU and will create additional instances automatically (*up to 6 in this PoC*) whenever its utilization is above 75% for 15 seconds or more. As the combined Workers' CPU utilization falls below that mark, the HPA will terminate unneeded instances.  
-  
+
+When deployed in a Kubernetes cluster, a [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/]) (*HPA*) monitors the Worker's CPU and will create additional instances automatically (*up to 4 in this PoC*) whenever its utilization is above 75% for 15 seconds or more. As the combined Workers' CPU utilization falls below that mark, the HPA will terminate unneeded instances.  
+
 The HPA's monitoring interval can be changed by setting the `--horizontal-pod-autoscaler-sync-period` flag in the cluster's default controller manager.  
-  
+
 ## System Architecture
 ![High Level Architecture](https://mermaid.ink/svg/eyJjb2RlIjoiZ3JhcGggTFJcbkEoW0luZ3Jlc3NdKSAgLS0-fG5naW54fCBCKENsaWVudClcbkIgLS0-fHByb3h5fCBDe0FQSX1cbkMgLS0-IEdcbkdbW1JlZGlzXV0gLS4tPiB8LWZpYm9uYWNjaSByZXN1bHQtfENcbkMgLS0-IElbKFBvc3RncmVzKV1cbkkgLS4tPiB8aW50ZWdlcnN8Q1xuQyAtLT4gSFtbUmFiYml0TVFdXVxuSCAtLT5EKFdvcmtlciAxKVxuRCAtLT4gR1xuSCAtLT5FKFdvcmtlciBuLTEpXG5FIC0tPiBHXG5IIC0tPkYoV29ya2VyIG4pXG5GIC0tPiBHIiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifX0)  
 
