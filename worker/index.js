@@ -10,7 +10,8 @@ const redisClient = redis.createClient({
 
 //Inefficient Fibonacci algorithm used to simulate system behaviour under different workloads
 function fibonacci(index) {
-    if (index < 2) return 1
+    if (index === 1) return 1
+    if (index < 1) return 0
     return (fibonacci(index - 1) + fibonacci(index - 2))
 }
 
@@ -25,7 +26,7 @@ Broker.create(config.RabbitMQ, (err, broker) => {
             ackOrNack()
             console.log(`Got message ${content}`)
             const time = process.hrtime()
-            const fib = fibonacci(parseInt(content) - 1)
+            const fib = fibonacci(parseInt(content))
             const diff = process.hrtime(time)
             redisClient.hset('values', content, fib)
             const minutes = Math.floor(diff[0] / 60)
