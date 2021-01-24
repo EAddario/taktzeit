@@ -1,6 +1,9 @@
 const config = require('./config')
 const redis = require('redis')
 const Broker = require('rascal').Broker
+const log4js = require("log4js");
+const logger = log4js.getLogger();
+logger.level = "DEBUG";
 
 const redisClient = redis.createClient({
     host: config.Redis.Host,
@@ -16,60 +19,68 @@ function fibonacci(index) {
 }
 
 Broker.create(config.RabbitMQ, (err, broker) => {
-    if (err) throw new Error(`Exception creating broker instance: ${err.message}`)
+    if (err) {
+        logger.fatal("Exception creating message broker instance")
+        throw new Error(`Exception creating message broker instance: ${err.message}`)
+    }
 
     // Consume a message
     broker.subscribe('worker_sub', (err, sub) => {
-        if (err) throw new Error(`Exception creating subscription: ${err.message}`)
+        if (err) {
+            logger.fatal("Exception creating message subscription")
+            throw new Error(`Exception creating message subscription: ${err.message}`)
+        }
+
+        logger.info('Broker created message subscription');
 
         sub.on('message', (message, content, ackOrNack) => {
             ackOrNack()
-            console.log(`Got message ${content}`)
+            logger.info(`Got message ${content}`)
             const time = process.hrtime()
             const fib = fibonacci(parseInt(content))
             const diff = process.hrtime(time)
             redisClient.hset('values', content, fib)
             const minutes = Math.floor(diff[0] / 60)
             const seconds = diff[0] - (minutes * 60)
-            console.log(`Computed Fibonacci for index ${content} in ${minutes}m ${seconds}s ${Math.ceil(diff[1] / 1000000)}ms`)
+            logger.info(`Computed Fibonacci for number ${content} in ${minutes}m ${seconds}s ${Math.ceil(diff[1] / 1000000)}ms`)
         })
             .on('error', (err) => {
-                console.error(`Error while consuming messages: ${err.message}`)
+                logger.error(`Error while consuming messages: ${err.message}`)
             })
             .on('cancelled', (err) => {
-                console.warn(`Cancelling messages: ${err.message}`)
+                logger.warn(`Cancelling messages: ${err.message}`)
             })
     });
 
     broker.on('vhost_initialised', ({ vhost, connectionUrl }) => {
-        console.warn(`Vhost ${vhost} was initialised using connection ${connectionUrl}`);
+        logger.warn(`Vhost ${vhost} was initialised using connection ${connectionUrl}`);
     })
 
     broker.on('blocked', (reason, { vhost, connectionUrl }) => {
-        console.warn(`Vhost ${vhost} was blocked on connection ${connectionUrl}. Reason: ${reason}`);
+        logger.warn(`Vhost ${vhost} was blocked on connection ${connectionUrl}. Reason: ${reason}`);
     })
 
     broker.on('unblocked', ({ vhost, connectionUrl }) => {
-        console.warn(`Vhost: ${vhost} was unblocked on connection: ${connectionUrl}`);
+        logger.warn(`Vhost: ${vhost} was unblocked on connection: ${connectionUrl}`);
     })
 
     broker.on('disconnect', () => {
-        console.warn('Broker disconnected');
+        logger.warn('Broker disconnected');
     })
 
     broker.on('connect', () => {
-        console.warn('Broker connected');
+        logger.warn('Broker connected');
     })
 
     broker.on('busy', (details) => {
-        console.warn(`vhost ${details.vhost}'s queue ${details.queue} is busy`);
+        logger.warn(`vhost ${details.vhost}'s queue ${details.queue} is busy`);
     })
 
     broker.on('ready', (details) => {
-        console.warn(`vhost ${details.vhost}'s queue ${details.queue} is now available`);
+        logger.warn(`vhost ${details.vhost}'s queue ${details.queue} is now available`);
     })
 
     broker.on('error', (err) => {
-        console.error(`Broker error: ${err.message}`)
+        logger.error(`Broker error: ${err.message}`)
     })
 })
