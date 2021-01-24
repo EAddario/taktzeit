@@ -1,4 +1,7 @@
 const config = require('./config')
+const log4js = require("log4js");
+const logger = log4js.getLogger();
+logger.level = "DEBUG";
 
 //Express app setup
 const express = require('express')
@@ -19,9 +22,9 @@ const pgClient = new Pool({
     password: config.Postgres.Password
 })
 
-pgClient.on('error', () => console.log('Lost Postgres connection'))
+pgClient.on('error', () => logger.fatal('Lost Postgres connection'))
 pgClient.query('CREATE TABLE IF NOT EXISTS values (number INT)')
-    .catch(err => console.log(err))
+    .catch(err => logger.fatal(err))
 
 //Redis client setup
 const redis = require('redis')
@@ -35,32 +38,39 @@ const redisClient = redis.createClient({
 const rabbitmq = require('rascal').Broker
 let rabbitClient
 rabbitmq.create(config.RabbitMQ, (err, _rabbitClient) => {
-    if (err) throw new Error(`Exception creating broker instance: ${err.message}`)
+    if (err) {
+        logger.fatal(`Exception creating broker instance: ${err.message}`)
+        throw new Error(`Exception creating broker instance: ${err.message}`)
+    }
     rabbitClient = _rabbitClient
 })
 
 //Express route handlers
 app.get('/', (req, res) => {
+    logger.debug("GET /")
     res.send('API Running...')
 });
 
 app.get('/values/all', async (req, res) => {
+    logger.debug("GET /values/all")
     const values = await pgClient.query('SELECT * FROM values');
     res.send(values.rows)
 })
 
 app.get('/values/current', async (req, res) => {
+    logger.debug("GET /values/current")
     redisClient.hgetall('values', (err, values) => {
         res.send(values)
     })
 })
 
 app.post('/values', async (req, res) => {
+    logger.debug("POST /values")
     const index = parseInt(req.body.index)
 
     if (!(Number.isInteger(index)) || (index > 55)) {
-        console.warn(`Index ${index} is too high`)
-        return res.status(422).send('Index too high')
+        logger.warn(`Number ${index} is too high`)
+        return res.status(422).send('Number too high')
     }
 
     redisClient.hset('values', index, 'NaN')
@@ -71,7 +81,7 @@ app.post('/values', async (req, res) => {
             console.error(`Error while publishing messages: ${err.message}`)
         })
     })
-    console.log(`Published index ${index}`)
+    logger.info(`Published number ${index}`)
 
     pgClient.query('INSERT INTO values(number) VALUES($1)', [index])
 
@@ -80,5 +90,5 @@ app.post('/values', async (req, res) => {
 
 //Express instantiation
 app.listen(5000, err => {
-    console.log('API listening...')
+    logger.info('API listening...')
 })
