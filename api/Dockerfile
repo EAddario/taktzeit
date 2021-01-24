@@ -1,12 +1,11 @@
-FROM node:14-alpine3.12
-RUN apk update && \
-    apk upgrade && \
-    rm -rf /var/cache/apk/* && \
-    adduser --disabled-password --shell /bin/ash --ingroup users user
-EXPOSE 5000
-USER user
-WORKDIR /home/user
-COPY ./package.json ./
+FROM node:14-alpine3.12 AS builder
+ADD . /app
+WORKDIR /app
 RUN npm install
-COPY . .
-CMD ["npm", "run", "start"]
+
+FROM gcr.io/distroless/nodejs:14
+COPY --from=builder /app /app
+WORKDIR /app
+EXPOSE 5000
+
+CMD ["index.js"]
