@@ -56,7 +56,7 @@ class Fib extends Component {
                         value={this.state.index}
                         onChange={event => this.setState({index: event.target.value})}
                     />
-                    <button>Submit</button>
+                    <button onClick={() => window.location.reload(true)}>Submit</button>
                 </form>
 
                 <h3>Previous Numbers</h3>

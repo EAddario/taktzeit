@@ -1,8 +1,101 @@
 # Taktzeit
 Simple PoC to demonstrate scalable cloud patterns and advantages of adhering to the [12 Factor App](https://12factor.net/) methodology.  
 
+## Deployment and Operation
+While a [Docker Compose](https://docs.docker.com/compose/) file is available, this PoC is designed to operate in a Kubernetes cluster. [kube-up](./kubernetes/kube-up) and [kube-down](./kubernetes/kube-down) shell scripts are provided to start and shutdown the PoC.
+
+```sh
+% kube-up
+
+Deploying Secrets
+secret/vault created
+
+Deploying RabbitMQ
+service/rabbitmq-cluster-ip created
+deployment.apps/rabbitmq-deployment created
+
+Sleeping 30 sec to allow for RabbitMQ startup
+▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇| 100%
+Deploying Redis
+service/redis-cluster-ip created
+deployment.apps/redis-deployment created
+
+Creating Peristent Volume Claim
+persistentvolumeclaim/database-pvc created
+
+Deploying Postgres
+service/postgres-cluster-ip created
+deployment.apps/postgres-deployment created
+
+Deploying WORKER service
+deployment.apps/worker-deployment created
+
+Deploy WORKER horizontal pod autoscaler? (y/n)
+y
+
+Deploying WORKER horizontal pod autoscaler
+horizontalpodautoscaler.autoscaling/worker-hpa created
+
+Deploying API service
+service/api-cluster-ip created
+deployment.apps/api-deployment created
+
+Deploying CLIENT service
+service/client-cluster-ip created
+deployment.apps/client-deployment created
+
+Deploying ingress service
+ingress.networking.k8s.io/ingress-service created
+
+Finished deploying cloud native system
+```
+
+```sh
+% kube-down
+
+Deleting ingress service
+ingress.networking.k8s.io "ingress-service" deleted
+
+Deleting CLIENT service
+service "client-cluster-ip" deleted
+deployment.apps "client-deployment" deleted
+
+Deleting API service
+service "api-cluster-ip" deleted
+deployment.apps "api-deployment" deleted
+
+Deleting WORKER horizontal pod autoscaler
+horizontalpodautoscaler.autoscaling "worker-hpa" deleted
+
+Deleting WORKER service
+deployment.apps "worker-deployment" deleted
+
+Deleting Postgres
+service "postgres-cluster-ip" deleted
+deployment.apps "postgres-deployment" deleted
+
+Delete Peristent Volume Claim? (y/n)
+y
+
+Deleting Peristent Volume Claim
+persistentvolumeclaim "database-pvc" deleted
+
+Deleting Redis
+service "redis-cluster-ip" deleted
+deployment.apps "redis-deployment" deleted
+
+Deleting RabbitMQ
+service "rabbitmq-cluster-ip" deleted
+deployment.apps "rabbitmq-deployment" deleted
+
+Deleting Secrets
+secret "vault" deleted
+
+Finished destroying cloud native system
+```
+
 ## System Behaviour
-Upon entering an integer in the web front-end (*located at http://localhost/ when deployed locally*), the system will calculate the [Fibonacci number](https://en.wikipedia.org/wiki/Fibonacci_number) using an inefficient recursive algorithm running in O(c<sup>n</sup>) time. For a good analysis of other (better) implementations check Ali Dasdan's paper [Twelve Simple Algorithms to Compute Fibonacci Numbers](https://arxiv.org/pdf/1803.07199.pdf).  
+Upon entering an integer in the web front-end, located at http://localhost/ when deployed locally (http://localhost:8080/ if running via docker compose), the system will calculate the [Fibonacci number](https://en.wikipedia.org/wiki/Fibonacci_number) using a very inefficient recursive algorithm running in O(c<sup>n</sup>) time. For a good analysis of other (better) implementations check Ali Dasdan's paper [Twelve Simple Algorithms to Compute Fibonacci Numbers](https://arxiv.org/pdf/1803.07199.pdf).  
 
 Values of 40 or less should complete within seconds with negligible resource consumption, while values approaching 50 will take exponentially longer and tax heavily the CPU. Values above 50 are **not** recommended, and values above 55 are ignored.  
 
