@@ -2,10 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: client-cluster-ip
+  labels:
+    app: client
+    version: 1.0.0
 spec:
   type: ClusterIP
   selector:
     component: web
   ports:
-  - port: 3000
-    targetPort: 3000
+  - port: 3010
+    targetPort: 3010

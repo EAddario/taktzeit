@@ -2,10 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: rabbitmq-cluster-ip
+  labels:
+    app: messaging
+    version: 1.0.0
 spec:
   type: ClusterIP
   selector:
-    component: msg
+    component: messaging
   ports:
   - port: 5672
     targetPort: 5672

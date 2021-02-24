@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: client-deployment
+  labels:
+    app: client
+    version: 1.0.0
 spec:
   replicas: 1
   selector:
@@ -11,12 +14,14 @@ spec:
     metadata:
       labels:
         component: web
+        app: client
+        version: 1.0.0
     spec:
       containers:
       - name: client
         image: edaddario/client
         ports:
-        - containerPort: 3000
+        - containerPort: 3010
         resources:
           limits:
             memory: "32Mi"

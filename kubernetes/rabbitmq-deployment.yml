@@ -2,15 +2,20 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: rabbitmq-deployment
+  labels:
+    app: messaging
+    version: 1.0.0
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: msg
+      component: messaging
   template:
     metadata:
       labels:
-        component: msg
+        component: messaging
+        app: messaging
+        version: 1.0.0
     spec:
       containers:
       - name: rabbitmq
