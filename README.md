@@ -1,8 +1,8 @@
 # Taktzeit
-Simple PoC to demonstrate scalable cloud patterns and advantages of adhering to the [12 Factor App](https://12factor.net/) methodology.  
+Simple PoC to demonstrate scalable cloud patterns and advantages of adhering to the [12 Factor App](https://12factor.net/) methodology.
 
 ## Deployment and Operation
-While a [Docker Compose](https://docs.docker.com/compose/) file is available, this PoC is designed to operate in a Kubernetes cluster. [kube-up](./kubernetes/kube-up) and [kube-down](./kubernetes/kube-down) shell scripts are provided to start and shutdown the PoC.
+While a [Docker Compose](https://docs.docker.com/compose/) file is available, this PoC is designed to operate in a Kubernetes cluster. [kube-up](./kubernetes/kube-up) and [kube-down](./kubernetes/kube-down) shell scripts are provided to start and shutdown the PoC, and it has been configured to be [Istio](https://istio.io/) friendly.
 
 ```sh
 % kube-up
