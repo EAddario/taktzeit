@@ -2,6 +2,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-service
+  labels:
+    app: ingress
+    version: 1.0.0
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /$1
@@ -14,12 +17,12 @@ spec:
               service:
                 name: client-cluster-ip
                 port:
-                  number: 3000
+                  number: 3010
             pathType: Exact
           - path: /api/?(.*)
             backend:
                 service:
                   name: api-cluster-ip
                   port:
-                    number: 5000
+                    number: 5010
             pathType: Exact

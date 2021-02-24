@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: api-deployment
+  labels:
+    app: api
+    version: 1.0.0
 spec:
   replicas: 1
   selector:
@@ -11,12 +14,14 @@ spec:
     metadata:
       labels:
         component: api
+        app: api
+        version: 1.0.0
     spec:
       containers:
       - name: api
         image: edaddario/api
         ports:
-        - containerPort: 5000
+        - containerPort: 5010
         env:
           - name: RABBITMQ_HOST
             value: rabbitmq-cluster-ip
