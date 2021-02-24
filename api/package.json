@@ -7,11 +7,11 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "log4js": "^6.3.0",
     "nodemon": "^2.0.7",
     "pg": "^8.5.1",
     "rascal": "^12.0.1",
-    "redis": "^3.0.2",
-    "log4js": "^6.3.0"
+    "redis": "^3.0.2"
   },
   "scripts": {
     "start": "node index.js",
