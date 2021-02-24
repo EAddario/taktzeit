@@ -69,8 +69,8 @@ app.post('/values', async (req, res) => {
     const index = parseInt(req.body.index)
 
     if (!(Number.isInteger(index)) || (index > 55)) {
-        logger.warn(`Number ${index} is too high`)
-        return res.status(422).send('Number too high')
+        logger.warn(`Invalid entry ${index}. Allowed range is 0 to 55`)
+        return res.status(422).send('Invalid entry. Allowed range is 0 to 55')
     }
 
     redisClient.hset('values', index, 'NaN')
@@ -89,6 +89,6 @@ app.post('/values', async (req, res) => {
 })
 
 //Express instantiation
-app.listen(5000, err => {
+app.listen(5010, err => {
     logger.info('API listening...')
 })
