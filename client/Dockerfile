@@ -10,4 +10,4 @@ RUN apk update && \
     rm -rf /var/cache/apk/*
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/build /usr/share/nginx/html
-EXPOSE 3000
+EXPOSE 3010
