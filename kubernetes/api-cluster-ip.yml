@@ -11,4 +11,5 @@ spec:
     component: api
   ports:
   - port: 5010
+    name: http
     targetPort: 5010

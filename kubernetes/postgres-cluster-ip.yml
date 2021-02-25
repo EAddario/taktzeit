@@ -11,4 +11,5 @@ spec:
     component: database
   ports:
   - port: 5432
+    name: tcp
     targetPort: 5432
