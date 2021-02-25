@@ -11,4 +11,5 @@ spec:
     component: web
   ports:
   - port: 3010
+    name: http
     targetPort: 3010

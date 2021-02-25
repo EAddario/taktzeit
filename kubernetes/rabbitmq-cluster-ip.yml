@@ -11,4 +11,5 @@ spec:
     component: messaging
   ports:
   - port: 5672
+    name: tcp
     targetPort: 5672
