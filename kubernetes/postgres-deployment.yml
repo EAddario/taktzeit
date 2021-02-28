@@ -22,7 +22,7 @@ spec:
           persistentVolumeClaim:
               claimName: database-pvc
       containers:
-      - name: api
+      - name: postgres
         image: postgres:alpine
         ports:
         - containerPort: 5432
