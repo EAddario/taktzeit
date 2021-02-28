@@ -2,7 +2,11 @@
 Simple PoC to demonstrate scalable cloud patterns and advantages of adhering to the [12 Factor App](https://12factor.net/) methodology.
 
 ## Deployment and Operation
-While a [Docker Compose](https://docs.docker.com/compose/) file is available, this PoC is designed to operate in a Kubernetes cluster. [kube-up](./kubernetes/kube-up) and [kube-down](./kubernetes/kube-down) shell scripts are provided to start and shutdown the PoC, and it has been configured to be [Istio](https://istio.io/) friendly.
+Althought a [Docker Compose](https://docs.docker.com/compose/) file is available, this PoC is designed to operate in a Kubernetes cluster and it has been configured to be [Istio](https://istio.io/) friendly.
+
+[kube-up](./kubernetes/kube-up) and [kube-down](./kubernetes/kube-down) shell scripts are provided to start and shutdown the PoC.
+
+[gen-load](./kubernetes/gen-load) can be used to generate test values from the command line instead of the browser.
 
 ```sh
 % kube-up
@@ -92,6 +96,41 @@ Deleting Secrets
 secret "vault" deleted
 
 Finished destroying cloud native system
+```
+```sh
+% gen-load seq 10 3
+Request 1
+{"working":true} (1)
+Request 2
+{"working":true} (2)
+Request 3
+{"working":true} (0)
+Request 4
+{"working":true} (1)
+Request 5
+{"working":true} (2)
+Request 6
+{"working":true} (0)
+Request 7
+{"working":true} (1)
+Request 8
+{"working":true} (2)
+Request 9
+{"working":true} (0)
+Request 10
+{"working":true} (1)
+
+% gen-load rep 5 ERR
+Request 1
+Invalid entry. Allowed range is 0 to 55 (ERR)
+Request 2
+Invalid entry. Allowed range is 0 to 55 (ERR)
+Request 3
+Invalid entry. Allowed range is 0 to 55 (ERR)
+Request 4
+Invalid entry. Allowed range is 0 to 55 (ERR)
+Request 5
+Invalid entry. Allowed range is 0 to 55 (ERR)
 ```
 
 ## System Behaviour

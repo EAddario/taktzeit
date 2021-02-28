@@ -1,0 +1,28 @@
+#!/bin/zsh
+autoload colors
+colors
+
+if [ $# -ne 3 ]
+then
+    echo "$fg_bold[red]gen-load: Generates a test load$reset_color"
+    echo "$fg_bold[red]Usage: gen-load [type] [iterations] [range]$reset_color"
+    echo
+    echo "$fg_bold[red]Example:$reset_color"
+    echo "$fg_bold[red]gen-load seq 50 10 $reset_color"
+    echo "$fg_bold[red]Generates 50 POST calls with sequential values (iteration modulus 10)$reset_color"
+    echo
+    echo "$fg_bold[red]gen-load rep 50 0$reset_color"
+    echo "$fg_bold[red]Generates 50 POST calls repeating value 0$reset_color"
+else
+    case $1 in
+        seq)
+            for i in {1..$2}; do echo "$fg_bold[red]Request $i$reset_color"; curl --request POST 'localhost/api/values' --header 'Content-Type: application/json' --data-raw '{"index":"'$(($i % $3))'"}'; echo " ("$(($i % $3))")"; done
+            ;;
+        rep)
+            for i in {1..$2}; do echo "$fg_bold[red]Request $i$reset_color"; curl --request POST 'localhost/api/values' --header 'Content-Type: application/json' --data-raw '{"index":"'$3'"}'; echo " ("$3")"; done
+            ;;
+        *)
+            echo "$fg_bold[red]Error: type must be one of ok or nok$reset_color"
+            ;;
+    esac
+fi
