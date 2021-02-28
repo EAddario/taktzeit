@@ -3,18 +3,18 @@ kind: Deployment
 metadata:
   name: client-deployment
   labels:
-    app: client
+    app: web
     version: 1.0.0
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: web
+      component: client
   template:
     metadata:
       labels:
-        component: web
-        app: client
+        component: client
+        app: web
         version: 1.0.0
     spec:
       containers:

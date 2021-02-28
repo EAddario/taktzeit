@@ -3,12 +3,12 @@ kind: Service
 metadata:
   name: client-cluster-ip
   labels:
-    app: client
+    app: web
     version: 1.0.0
 spec:
   type: ClusterIP
   selector:
-    component: web
+    component: client
   ports:
   - port: 3010
     name: http
