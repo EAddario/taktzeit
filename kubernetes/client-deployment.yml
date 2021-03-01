@@ -24,4 +24,4 @@ spec:
         - containerPort: 3010
         resources:
           limits:
-            memory: "32Mi"
+            memory: "8Mi"
