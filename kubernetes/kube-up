@@ -21,16 +21,14 @@ echo -e "\n$fg_bold[red]Deploying Secrets$reset_color"
 kubectl apply -f secrets-vault.yml
 echo -e "\n$fg_bold[red]Deploying RabbitMQ$reset_color"
 kubectl apply -f rabbitmq-cluster-ip.yml -f rabbitmq-deployment.yml
-echo -e "\n$fg_bold[red]Sleeping 30 sec to allow for RabbitMQ startup$reset_color"
-progress-bar 30
 echo -e "\n$fg_bold[red]Deploying Redis$reset_color"
 kubectl apply -f redis-cluster-ip.yml -f redis-deployment.yml
 echo -e "\n$fg_bold[red]Creating Peristent Volume Claim $reset_color"
 kubectl apply -f database-pvc.yml
 echo -e "\n$fg_bold[red]Deploying Postgres$reset_color"
 kubectl apply -f postgres-cluster-ip.yml -f postgres-deployment.yml
-echo -e "\n$fg_bold[red]Deploying WORKER service$reset_color"
-kubectl apply -f worker-deployment.yml
+echo -e "\n$fg_bold[red]Sleeping 30 sec to allow for system stabilization$reset_color"
+progress-bar 30
 
 echo -e "\n$fg_bold[yellow]Deploy WORKER horizontal pod autoscaler? (y/n)$reset_color"
 read ANSWER
@@ -40,6 +38,8 @@ then
   kubectl apply -f worker-hpa.yml
 fi
 
+echo -e "\n$fg_bold[red]Deploying WORKER service$reset_color"
+kubectl apply -f worker-deployment.yml
 echo -e "\n$fg_bold[red]Deploying API service$reset_color"
 kubectl apply -f api-cluster-ip.yml -f api-deployment.yml
 echo -e "\n$fg_bold[red]Deploying CLIENT service$reset_color"
