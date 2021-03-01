@@ -3,6 +3,8 @@ const log4js = require("log4js");
 const logger = log4js.getLogger();
 logger.level = "DEBUG";
 
+logger.info("API initializing...")
+
 //Express app setup
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -92,3 +94,5 @@ app.post('/values', async (req, res) => {
 app.listen(5010, err => {
     logger.info('API listening...')
 })
+
+logger.info("API ready...")

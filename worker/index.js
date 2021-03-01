@@ -5,6 +5,8 @@ const log4js = require("log4js");
 const logger = log4js.getLogger();
 logger.level = "DEBUG";
 
+logger.info("Worker initializing...")
+
 const redisClient = redis.createClient({
     host: config.Redis.Host,
     port: config.Redis.Port,
@@ -84,3 +86,5 @@ Broker.create(config.RabbitMQ, (err, broker) => {
         logger.error(`Broker error: ${err.message}`)
     })
 })
+
+logger.info("Worker ready...")
