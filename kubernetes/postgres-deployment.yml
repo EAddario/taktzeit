@@ -38,4 +38,4 @@ spec:
                 key: POSTGRES_PASSWORD
         resources:
           limits:
-            memory: "128Mi"
+            memory: "64Mi"
