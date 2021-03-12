@@ -1,4 +1,4 @@
-FROM node:14-alpine3.12 as builder
+FROM node:14-alpine3.13 AS builder
 ADD . /app
 WORKDIR /app
 RUN npm install
