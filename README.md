@@ -138,7 +138,7 @@ Upon entering an integer in the web front-end, located at http://localhost/ when
 
 Values of 40 or less should complete within seconds with negligible resource consumption, while values approaching 50 will take exponentially longer and tax heavily the CPU. Values above 50 are **not** recommended, and values above 55 are ignored.  
 
-Although overly simplistic in their implementation, each service is designed to be event-driven, concurrent, stateless, disposable  and capable of significant horizontal scaling. All the system's state is managed by backing services (*PostgreSQL, RabbbitMQ and Redis*).  
+Although overly simplistic in their implementation, each service is designed to be event-driven, concurrent, stateless, disposable  and capable of significant horizontal scaling. All of the system's state is managed by backing services (*PostgreSQL, RabbbitMQ and Redis*).  
 
 When deployed in a Kubernetes cluster, a [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) (*HPA*) monitors the Worker's CPU and will create additional instances automatically (*up to 4 in this PoC*) whenever its utilization is above 50% for 15 seconds or more. As the combined Workers' CPU utilization falls below that mark, the HPA will terminate unneeded instances.  
 
