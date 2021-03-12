@@ -1,4 +1,4 @@
-const config = require('./config')
+const config = require("./config")
 const log4js = require("log4js");
 const logger = log4js.getLogger();
 logger.level = "DEBUG";
@@ -6,16 +6,15 @@ logger.level = "DEBUG";
 logger.info("API initializing...")
 
 //Express app setup
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-
+const express = require("express")
+const bodyParser = require("body-parser")
+const cors = require("cors")
 const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
 //Postgres app setup
-const {Pool} = require('pg')
+const {Pool} = require("pg")
 const pgClient = new Pool({
     database: config.Postgres.Database,
     host: config.Postgres.Host,
@@ -24,12 +23,12 @@ const pgClient = new Pool({
     password: config.Postgres.Password
 })
 
-pgClient.on('error', () => logger.fatal('Lost Postgres connection'))
+pgClient.on('error', () => logger.fatal("Lost Postgres connection"))
 pgClient.query('CREATE TABLE IF NOT EXISTS values (number INT)')
     .catch(err => logger.fatal(err))
 
 //Redis client setup
-const redis = require('redis')
+const redis = require("redis")
 const redisClient = redis.createClient({
     host: config.Redis.Host,
     port: config.Redis.Port,
@@ -37,7 +36,7 @@ const redisClient = redis.createClient({
 })
 
 // RabbitMQ client setup
-const rabbitmq = require('rascal').Broker
+const rabbitmq = require("rascal").Broker
 let rabbitClient
 rabbitmq.create(config.RabbitMQ, (err, _rabbitClient) => {
     if (err) {
@@ -72,7 +71,7 @@ app.post('/values', async (req, res) => {
 
     if (!(Number.isInteger(index)) || (index > 55)) {
         logger.warn(`Invalid entry ${index}. Allowed range is 0 to 55`)
-        return res.status(422).send('Invalid entry. Allowed range is 0 to 55')
+        return res.status(422).send('{error:"Invalid entry. Allowed range is 0 to 55"}')
     }
 
     redisClient.hset('values', index, 'NaN')
@@ -90,9 +89,19 @@ app.post('/values', async (req, res) => {
     res.send({working: true})
 })
 
+app.post('/values/reset', async (req, res) => {
+    logger.debug("POST /values/reset")
+
+    pgClient.query('TRUNCATE values')
+        .then(() => logger.info("PostgreSQL data flushed"))
+        .catch(err => logger.fatal(err))
+
+    redisClient.flushdb('ASYNC', () => logger.info("Redis cache flushed"))
+})
+
 //Express instantiation
 app.listen(5010, err => {
-    logger.info('API listening...')
+    logger.info("API listening...")
 })
 
 logger.info("API ready...")
