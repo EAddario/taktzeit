@@ -47,7 +47,7 @@ class Fib extends Component {
         for (let key in this.state.values) {
             entries.push(
                 <div key={key}>
-                    Fibonacci of {key} is {this.state.values[key]}
+                    Fibonacci of {key} is {parseInt(this.state.values[key], 10).toLocaleString()}
                 </div>
             )
         }
