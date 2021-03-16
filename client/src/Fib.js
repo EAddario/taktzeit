@@ -1,4 +1,3 @@
-import "./Fib.css"
 import React, {Component} from "react"
 import axios from "axios"
 
@@ -57,7 +56,7 @@ class Fib extends Component {
 
     render() {
         return (
-            <div className="fibonacci">
+            <div className="fibonacci" style={{marginTop: '20px', fontSize: '120 %'}}>
                 <div className="ui container">
                     <div className="ui message">
                         <div className="header">Simple proof of concept to demonstrate scalable cloud patterns</div>
@@ -72,7 +71,7 @@ class Fib extends Component {
                             event-driven, concurrent, stateless, disposable and capable of significant horizontal
                             scaling. All of the system's state is managed by backing services (PostgreSQL, RabbbitMQ
                             and Redis).</p>
-                        <p>Click <b>&lt;Reset Data&gt;</b> to clear all values.</p>
+                        <p align="right">Click <b>&lt;Reset Data&gt;</b> to clear all values.</p>
                     </div>
                 </div>
                 <br/>
@@ -80,13 +79,13 @@ class Fib extends Component {
                     <div className="ui segment">
                         <div className="ui grid">
                             <div className="eleven wide column">
-                                <div className="ui message">
+                                <div className="ui message" style= {{height: '300px', overflowY: 'auto'}}>
                                     <div className="header">Previous Numbers</div>
                                     <p>{this.renderSeenIndexes()}</p>
                                 </div>
                             </div>
                             <div className="five wide column">
-                                <div className="ui message">
+                                <div className="ui message" style= {{height: '300px', overflowY: 'auto'}}>
                                     <div className="header">Results</div>
                                     <p>{this.renderValues()}</p>
                                 </div>
