@@ -3,7 +3,7 @@ const log4js = require("log4js");
 const logger = log4js.getLogger();
 logger.level = "DEBUG";
 
-logger.info("API initializing...")
+logger.info("API server initializing...")
 
 //Express app setup
 const express = require("express")
@@ -36,9 +36,10 @@ const redisClient = redis.createClient({
 })
 
 // RabbitMQ client setup
-const rabbitmq = require("rascal").Broker
+const rabbitBroker = require("rascal").Broker
 let rabbitClient
-rabbitmq.create(config.RabbitMQ, (err, _rabbitClient) => {
+
+rabbitBroker.create(config.RabbitMQ, (err, _rabbitClient) => {
     if (err) {
         logger.fatal(`Exception creating broker instance: ${err.message}`)
         throw new Error(`Exception creating broker instance: ${err.message}`)
@@ -78,11 +79,24 @@ app.post('/values', async (req, res) => {
 
     rabbitClient.publish('worker_pub', index, (err, pub) => {
         if (err) throw new Error(`Exception while publishing: ${err.message}`)
+
         pub.on('error', (err) => {
-            console.error(`Error while publishing messages: ${err.message}`)
+            logger.error(`Error while publishing number ${index}`)
+        })
+
+        pub.on('success', () => {
+            logger.info(`Published number ${index}`)
+        })
+
+        pub.on('return', () => {
+            logger.warn(`Could not publish number ${index}`)
+        })
+
+        pub.on('paused', () => {
+            logger.warn(`Publication was paused. Aborting  number ${index}`)
+            pub.abort()
         })
     })
-    logger.info(`Published number ${index}`)
 
     pgClient.query('INSERT INTO values(number) VALUES($1)', [index])
 
@@ -101,7 +115,12 @@ app.post('/values/reset', async (req, res) => {
 
 //Express instantiation
 app.listen(5010, err => {
-    logger.info("API listening...")
+    if (err) {
+        logger.fatal(`Exception creating API server: ${err.message}`)
+        throw new Error(`Exception creating API server: ${err.message}`)
+    }
+
+    logger.info("API server listening...")
 })
 
-logger.info("API ready...")
+logger.info("API server ready...")
