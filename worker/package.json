@@ -2,7 +2,7 @@
   "dependencies": {
     "amqplib": "^0.7.1",
     "log4js": "^6.3.0",
-    "rascal": "^12.0.3",
+    "rascal": "^13.0.0",
     "redis": "^3.0.2"
   },
   "devDependencies": {
