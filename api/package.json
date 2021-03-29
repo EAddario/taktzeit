@@ -6,13 +6,13 @@
     "express": "^4.17.1",
     "log4js": "^6.3.0",
     "pg": "^8.5.1",
-    "rascal": "^12.0.3",
+    "rascal": "^13.0.0",
     "redis": "^3.0.2"
   },
   "devDependencies": {
     "@types/amqplib": "^0.5.17",
     "@types/body-parser": "^1.19.0",
-    "@types/cors": "^2.8.5",
+    "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
     "@types/pg": "^7.14.11",
     "@types/rascal": "^10.0.3",
