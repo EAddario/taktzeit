@@ -5,7 +5,7 @@ class Fib extends Component {
     state = {
         seenIndexes: [],
         values: {},
-        index: ''
+        index: ""
     }
 
     componentDidMount() {
@@ -132,7 +132,7 @@ class Fib extends Component {
                     </div>
                 </div>
             </div>
-        );
+        )
     }
 }
 

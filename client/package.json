@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "axios": "^0.21.1",
@@ -11,8 +11,8 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.10",
-    "@testing-library/react": "^11.2.5",
-    "@testing-library/user-event": "^13.0.16",
+    "@testing-library/react": "^11.2.6",
+    "@testing-library/user-event": "^13.1.2",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3"
   },
@@ -23,7 +23,16 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "rules": {
+      "semi": [
+        "error",
+        "never"
+      ],
+      "no-redeclare": "error",
+      "curly": "error",
+      "no-unused-vars": "warn"
+    }
   },
   "browserslist": {
     "production": [
