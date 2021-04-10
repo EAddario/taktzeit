@@ -3,9 +3,11 @@ const redis = require('redis')
 const Broker = require('rascal').Broker
 const log4js = require("log4js");
 const logger = log4js.getLogger();
-logger.level = "DEBUG";
+const { v4: uuidv4 } = require('uuid');
 
-logger.info("Worker initializing...")
+const instanceId = uuidv4()
+logger.level = "DEBUG";
+logger.info(`Worker ${instanceId} initializing...`)
 
 const redisClient = redis.createClient({
     host: config.Redis.Host,
@@ -22,14 +24,14 @@ function fibonacci(index) {
 
 Broker.create(config.RabbitMQ, (err, broker) => {
     if (err) {
-        logger.fatal("Exception creating message broker instance")
+        logger.fatal('Exception creating message broker instance')
         throw new Error(`Exception creating message broker instance: ${err.message}`)
     }
 
     // Consume a message
     broker.subscribe('worker_sub', (err, sub) => {
         if (err) {
-            logger.fatal("Exception creating message subscription")
+            logger.fatal('Exception creating message subscription')
             throw new Error(`Exception creating message subscription: ${err.message}`)
         }
 
@@ -44,7 +46,7 @@ Broker.create(config.RabbitMQ, (err, broker) => {
             redisClient.hset('values', content, fib)
             const minutes = Math.floor(diff[0] / 60)
             const seconds = diff[0] - (minutes * 60)
-            logger.info(`Computed Fibonacci for number ${content} in ${minutes}m ${seconds}s ${Math.ceil(diff[1] / 1000000)}ms`)
+            logger.info(`Worker ${instanceId} computed Fibonacci for number ${content} in ${minutes}m ${seconds}s ${Math.ceil(diff[1] / 1000000)}ms`)
         })
             .on('error', (err) => {
                 logger.error(`Error while consuming messages: ${err.message}`)
@@ -87,4 +89,4 @@ Broker.create(config.RabbitMQ, (err, broker) => {
     })
 })
 
-logger.info("Worker ready...")
+logger.info(`Worker ${instanceId} ready...`)
