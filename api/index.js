@@ -3,7 +3,7 @@ const log4js = require("log4js");
 const logger = log4js.getLogger();
 logger.level = "DEBUG";
 
-logger.info("API server initializing...")
+logger.info('API server initializing...')
 
 //Express app setup
 const express = require("express")
@@ -23,7 +23,7 @@ const pgClient = new Pool({
     password: config.Postgres.Password
 })
 
-pgClient.on('error', () => logger.fatal("Lost Postgres connection"))
+pgClient.on('error', () => logger.fatal('Lost Postgres connection'))
 pgClient.query('CREATE TABLE IF NOT EXISTS values (number INT)')
     .catch(err => logger.fatal(err))
 
@@ -49,25 +49,25 @@ rabbitBroker.create(config.RabbitMQ, (err, _rabbitClient) => {
 
 //Express route handlers
 app.get('/', (req, res) => {
-    logger.debug("GET /")
+    logger.debug('GET /')
     res.send('API Running...')
 });
 
 app.get('/values/all', async (req, res) => {
-    logger.debug("GET /values/all")
+    logger.debug('GET /values/all')
     const values = await pgClient.query('SELECT * FROM values');
     res.send(values.rows)
 })
 
 app.get('/values/current', async (req, res) => {
-    logger.debug("GET /values/current")
+    logger.debug('GET /values/current')
     redisClient.hgetall('values', (err, values) => {
         res.send(values)
     })
 })
 
 app.post('/values', async (req, res) => {
-    logger.debug("POST /values")
+    logger.debug('POST /values')
     const index = parseInt(req.body.index)
 
     if (!(Number.isInteger(index)) || (index > 55)) {
@@ -81,7 +81,7 @@ app.post('/values', async (req, res) => {
         if (err) throw new Error(`Exception while publishing: ${err.message}`)
 
         pub.on('error', (err) => {
-            logger.error(`Error while publishing number ${index}`)
+            logger.error(`${err} while publishing number ${index}`)
         })
 
         pub.on('success', () => {
@@ -103,11 +103,11 @@ app.post('/values', async (req, res) => {
     res.send({working: true})
 })
 
-app.post('/values/reset', async (req, res) => {
+app.post('/values/reset', async () => {
     logger.debug("POST /values/reset")
 
     pgClient.query('TRUNCATE values')
-        .then(() => logger.info("PostgreSQL data flushed"))
+        .then(() => logger.info('PostgreSQL data flushed'))
         .catch(err => logger.fatal(err))
 
     redisClient.flushdb('ASYNC', () => logger.info("Redis cache flushed"))
@@ -120,7 +120,7 @@ app.listen(5010, err => {
         throw new Error(`Exception creating API server: ${err.message}`)
     }
 
-    logger.info("API server listening...")
+    logger.info('API server listening...')
 })
 
-logger.info("API server ready...")
+logger.info('API server ready...')
