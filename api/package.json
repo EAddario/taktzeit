@@ -1,4 +1,7 @@
 {
+  "name": "api",
+  "version": "1.0.0",
+  "private": true,
   "dependencies": {
     "amqplib": "^0.7.1",
     "body-parser": "^1.19.0",
@@ -7,7 +10,7 @@
     "log4js": "^6.3.0",
     "pg": "^8.5.1",
     "rascal": "^13.0.0",
-    "redis": "^3.0.2"
+    "redis": "^3.1.0"
   },
   "devDependencies": {
     "@types/amqplib": "^0.5.17",
@@ -22,5 +25,16 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon"
+  },
+  "eslintConfig": {
+    "rules": {
+      "semi": [
+        "error",
+        "never"
+      ],
+      "no-redeclare": "error",
+      "curly": "error",
+      "no-unused-vars": "warn"
+    }
   }
 }
