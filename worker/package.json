@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "amqplib": "^0.7.1",
-    "log4js": "^6.3.0",
+    "log4js": "^6.4.0",
     "rascal": "^13.0.0",
     "redis": "^3.1.0",
     "uuid": "^8.3.2"
