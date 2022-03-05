@@ -1,10 +1,10 @@
-FROM node:14-alpine3.13 AS builder
+FROM node:16-alpine3.15 AS builder
 ADD . /app
 WORKDIR /app
 RUN npm install
 RUN npm run build
 
-FROM nginx:alpine
+FROM nginx:1.21.6-alpine
 RUN apk update && \
     apk upgrade && \
     rm -rf /var/cache/apk/*

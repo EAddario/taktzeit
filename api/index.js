@@ -30,10 +30,15 @@ pgClient.query('CREATE TABLE IF NOT EXISTS values (number INT)')
 //Redis client setup
 const redis = require("redis")
 const redisClient = redis.createClient({
-    host: config.Redis.Host,
-    port: config.Redis.Port,
-    retry_strategy: () => 1000
-})
+    socket:{
+        host: config.Redis.Host,
+        port: config.Redis.Port,
+        reconnectStrategy: () => 1000
+    }})
+
+redisClient.connect()
+    .then(() => logger.info("Connected to Redis"))
+    .catch(err => logger.fatal(err))
 
 // RabbitMQ client setup
 const rabbitBroker = require("rascal").Broker
@@ -61,9 +66,9 @@ app.get('/values/all', async (req, res) => {
 
 app.get('/values/current', async (req, res) => {
     logger.debug('GET /values/current')
-    redisClient.hgetall('values', (err, values) => {
-        res.send(values)
-    })
+    redisClient.hGetAll('values')
+        .then(values => {res.send(values)})
+        .catch(err => logger.fatal(err))
 })
 
 app.post('/values', async (req, res) => {
@@ -75,7 +80,8 @@ app.post('/values', async (req, res) => {
         return res.status(422).send('{error:"Invalid entry. Allowed range is 0 to 55"}')
     }
 
-    redisClient.hset('values', index, 'NaN')
+    redisClient.hSet('values', index, 'NaN')
+        .catch(err => logger.fatal(err))
 
     rabbitClient.publish('worker_pub', index, (err, pub) => {
         if (err) throw new Error(`Exception while publishing: ${err.message}`)
@@ -110,7 +116,8 @@ app.post('/values/reset', async () => {
         .then(() => logger.info('PostgreSQL data flushed'))
         .catch(err => logger.fatal(err))
 
-    redisClient.flushdb('ASYNC', () => logger.info("Redis cache flushed"))
+    redisClient.flushDb('ASYNC', () => logger.info("Redis cache flushed"))
+        .catch(err => logger.fatal(err))
 })
 
 //Express instantiation

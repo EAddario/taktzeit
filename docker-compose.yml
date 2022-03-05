@@ -2,7 +2,7 @@ version: '3'
 services:
 
   rabbitmq:
-    image: 'rabbitmq:alpine'
+    image: 'rabbitmq:3.9.13-alpine'
     healthcheck:
       test: nc -z localhost 5672 || exit 1
       interval: 30s
@@ -12,10 +12,10 @@ services:
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit heartbeat 900
 
   redis:
-    image: 'redis:alpine'
+    image: 'redis:6.2.6-alpine'
 
   postgres:
-    image: 'postgres:alpine'
+    image: 'postgres:14.2-alpine'
     environment:
       - POSTGRES_PASSWORD=pg_password
 

@@ -10,10 +10,15 @@ logger.level = "DEBUG";
 logger.info(`Worker ${instanceId} initializing...`)
 
 const redisClient = redis.createClient({
-    host: config.Redis.Host,
-    port: config.Redis.Port,
-    retry_strategy: () => 1000
-})
+    socket:{
+        host: config.Redis.Host,
+        port: config.Redis.Port,
+        reconnectStrategy: () => 1000
+    }})
+
+redisClient.connect()
+    .then(() => logger.info("Connected to Redis"))
+    .catch(err => logger.fatal(err))
 
 //Inefficient Fibonacci algorithm used to simulate system behaviour under different workloads
 function fibonacci(index) {
@@ -43,7 +48,8 @@ Broker.create(config.RabbitMQ, (err, broker) => {
             const time = process.hrtime()
             const fib = fibonacci(parseInt(content))
             const diff = process.hrtime(time)
-            redisClient.hset('values', content, fib)
+            redisClient.hSet('values', content, fib)
+                .catch(err => logger.fatal(err))
             const minutes = Math.floor(diff[0] / 60)
             const seconds = diff[0] - (minutes * 60)
             logger.info(`Worker ${instanceId} computed Fibonacci for number ${content} in ${minutes}m ${seconds}s ${Math.ceil(diff[1] / 1000000)}ms`)
