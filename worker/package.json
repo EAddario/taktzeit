@@ -3,18 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "amqplib": "^0.7.1",
-    "log4js": "^6.3.0",
-    "rascal": "^13.0.0",
-    "redis": "^3.1.0",
-    "uuid": "^8.3.2"
+    "amqplib": "0.8.0",
+    "log4js": "6.4.1",
+    "rascal": "14.4.0",
+    "redis": "4.0.4",
+    "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.5.17",
-    "@types/rascal": "^10.0.3",
-    "@types/redis": "^2.8.28",
-    "@types/uuid": "^8.3.0",
-    "nodemon": "^2.0.7"
+    "@types/amqplib": "0.8.2",
+    "@types/rascal": "10.0.4",
+    "@types/uuid": "8.3.4",
+    "nodemon": "2.0.15"
   },
   "scripts": {
     "start": "node index.js",
