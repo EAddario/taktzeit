@@ -23,7 +23,7 @@ spec:
               claimName: database-pvc
       containers:
       - name: postgres
-        image: postgres:alpine
+        image: postgres:14.2-alpine
         ports:
         - containerPort: 5432
         volumeMounts:
