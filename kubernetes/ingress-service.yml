@@ -4,6 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/component: controller
   name: nginx
+  namespace: taktzeit
   annotations:
     ingressclass.kubernetes.io/is-default-class: "true"
 spec:
@@ -14,6 +15,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-service
+  namespace: taktzeit
   labels:
     app: ingress
     version: 1.0.0
@@ -28,7 +30,8 @@ spec:
       port:
         number: 80
   rules:
-    - http:
+    - host: localhost
+      http:
         paths:
           - path: /?(.*)
             backend:
@@ -39,8 +42,8 @@ spec:
             pathType: ImplementationSpecific
           - path: /api/?(.*)
             backend:
-                service:
-                  name: api-cluster-ip
-                  port:
-                    number: 5010
+              service:
+                name: api-cluster-ip
+                port:
+                  number: 5010
             pathType: ImplementationSpecific

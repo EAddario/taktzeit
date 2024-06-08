@@ -17,6 +17,8 @@ progress-bar() { # progress-bar: A very nice shell progress bar by https://githu
   clean_line
 }
 
+echo -e "\n$fg_bold[red]Creating taktzeit namespace$reset_color"
+kubectl apply -f taktzeit-namespace.yml
 echo -e "\n$fg_bold[red]Deploying Secrets$reset_color"
 kubectl apply -f secrets-vault.yml
 echo -e "\n$fg_bold[red]Deploying RabbitMQ$reset_color"
@@ -27,8 +29,8 @@ echo -e "\n$fg_bold[red]Creating Peristent Volume Claim $reset_color"
 kubectl apply -f database-pvc.yml
 echo -e "\n$fg_bold[red]Deploying Postgres$reset_color"
 kubectl apply -f postgres-cluster-ip.yml -f postgres-deployment.yml
-echo -e "\n$fg_bold[red]Sleeping 30 sec to allow for system stabilization$reset_color"
-progress-bar 30
+echo -e "\n$fg_bold[red]Sleeping 15 sec to allow for system stabilization$reset_color"
+progress-bar 15
 
 echo -e "\n$fg_bold[yellow]Deploy WORKER horizontal pod autoscaler? (y/n)$reset_color"
 read ANSWER

@@ -2,6 +2,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: worker-hpa
+  namespace: taktzeit
   labels:
     app: worker
     version: 1.0.0

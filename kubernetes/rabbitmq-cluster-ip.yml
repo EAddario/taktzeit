@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: rabbitmq-cluster-ip
+  namespace: taktzeit
   labels:
     app: messaging
     version: 1.0.0
