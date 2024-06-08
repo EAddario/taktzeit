@@ -20,22 +20,22 @@ spec:
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
-              claimName: database-pvc
+            claimName: database-pvc
       containers:
-      - name: postgres
-        image: postgres:14.2-alpine
-        ports:
-        - containerPort: 5432
-        volumeMounts:
-          - name: postgres-storage
-            mountPath: /var/lib/postgresql/data
-            subPath: postgres
-        env:
-          - name: POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: vault
-                key: POSTGRES_PASSWORD
-        resources:
-          limits:
-            memory: "64Mi"
+        - name: postgres
+          image: postgres:16.3-alpine3.20
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vault
+                  key: POSTGRES_PASSWORD
+          resources:
+            limits:
+              memory: "64Mi"

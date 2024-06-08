@@ -18,10 +18,10 @@ spec:
         version: 1.0.0
     spec:
       containers:
-      - name: redis
-        image: redis:6.2.6-alpine
-        ports:
-        - containerPort: 6379
-        resources:
-          limits:
-            memory: "12Mi"
+        - name: redis
+          image: redis:7.2.5-alpine
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              memory: "12Mi"

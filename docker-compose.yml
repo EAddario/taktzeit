@@ -1,8 +1,7 @@
-version: '3'
 services:
 
   rabbitmq:
-    image: 'rabbitmq:3.9.13-alpine'
+    image: 'rabbitmq:3.13.3-alpine'
     healthcheck:
       test: nc -z localhost 5672 || exit 1
       interval: 30s
@@ -12,10 +11,10 @@ services:
       - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit heartbeat 900
 
   redis:
-    image: 'redis:6.2.6-alpine'
+    image: 'redis:7.2.5-alpine'
 
   postgres:
-    image: 'postgres:14.2-alpine'
+    image: 'postgres:16.3-alpine3.20'
     environment:
       - POSTGRES_PASSWORD=pg_password
 
@@ -39,7 +38,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./api
-    environment: 
+    environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
       - RABBITMQ_USER=guest
@@ -71,7 +70,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./nginx
-    ports: 
+    ports:
       - '8080:80'
     depends_on:
       - api
