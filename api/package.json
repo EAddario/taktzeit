@@ -3,26 +3,26 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "amqplib": "0.8.0",
-    "body-parser": "1.19.2",
+    "amqplib": "0.10.4",
+    "body-parser": "1.20.2",
     "cors": "2.8.5",
-    "express": "4.17.3",
-    "log4js": "6.4.2",
-    "pg": "8.7.3",
-    "rascal": "14.4.0",
-    "redis": "4.0.4"
+    "express": "4.19.2",
+    "log4js": "6.9.1",
+    "pg": "8.12.0",
+    "rascal": "20.1.0",
+    "redis": "4.6.14"
   },
   "devDependencies": {
-    "@types/amqplib": "0.8.2",
-    "@types/body-parser": "1.19.2",
-    "@types/cors": "2.8.12",
-    "@types/express": "4.17.13",
-    "@types/pg": "8.6.4",
-    "@types/rascal": "10.0.4",
-    "@types/redis": "4.0.11",
-    "nodemon": "2.0.15"
+    "@types/amqplib": "0.10.5",
+    "@types/body-parser": "1.19.5",
+    "@types/cors": "2.8.17",
+    "@types/express": "4.17.21",
+    "@types/pg": "8.11.6",
+    "@types/rascal": "10.0.9",
+    "nodemon": "3.1.3"
   },
   "scripts": {
+    "clean": "npm ci",
     "start": "node index.js",
     "dev": "nodemon"
   },
