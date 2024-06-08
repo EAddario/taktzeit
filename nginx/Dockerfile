@@ -1,4 +1,4 @@
-FROM nginx:1.21.6-alpine
+FROM nginx:1.27.0-alpine
 RUN apk update && \
     apk upgrade && \
     rm -rf /var/cache/apk/*
