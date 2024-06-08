@@ -23,7 +23,7 @@ services:
   postgres:
     image: 'postgres:16.3-alpine3.20'
     healthcheck:
-      test: pg_isready -d postgres
+      test: pg_isready -d postgres -U postgres
       interval: 30s
       timeout: 10s
       retries: 4
