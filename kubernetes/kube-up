@@ -29,8 +29,8 @@ echo -e "\n$fg_bold[red]Creating Peristent Volume Claim $reset_color"
 kubectl apply -f database-pvc.yml
 echo -e "\n$fg_bold[red]Deploying Postgres$reset_color"
 kubectl apply -f postgres-cluster-ip.yml -f postgres-deployment.yml
-echo -e "\n$fg_bold[red]Sleeping 15 sec to allow for system stabilization$reset_color"
-progress-bar 15
+echo -e "\n$fg_bold[red]Sleeping 45 sec to allow for system stabilization$reset_color"
+progress-bar 45
 
 echo -e "\n$fg_bold[yellow]Deploy WORKER horizontal pod autoscaler? (y/n)$reset_color"
 read ANSWER
