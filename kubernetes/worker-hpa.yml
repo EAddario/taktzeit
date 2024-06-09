@@ -11,7 +11,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: worker-deployment
-  maxReplicas: 4
+  maxReplicas: 5
   minReplicas: 1
   metrics:
     - type: Resource
@@ -19,10 +19,10 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 50
+          averageUtilization: 90
   behavior:
     scaleDown:
-      stabilizationWindowSeconds: 120
+      stabilizationWindowSeconds: 60
       policies:
         - type: Percent
           value: 100
@@ -32,4 +32,4 @@ spec:
       policies:
         - type: Percent
           value: 100
-          periodSeconds: 10
+          periodSeconds: 15
