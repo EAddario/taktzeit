@@ -23,9 +23,13 @@ spec:
           image: rabbitmq:3.13.3-alpine
           ports:
             - containerPort: 5672
-          resources:
-            limits:
-              memory: "256Mi"
           env:
             - name: RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS
               value: -rabbit heartbeat 900
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 500m
+            requests:
+              memory: 144Mi
+              cpu: 50m

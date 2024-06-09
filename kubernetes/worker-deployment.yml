@@ -39,5 +39,8 @@ spec:
             value: "6379"
         resources:
           limits:
-            memory: "64Mi"
-            cpu: "0.25"
+            memory: 56Mi
+            cpu: 500m
+          requests:
+            memory: 40Mi
+            cpu: 10m
