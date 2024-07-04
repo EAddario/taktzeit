@@ -2,6 +2,22 @@
 autoload colors
 colors
 
+APP=$0
+K8S="nginx"
+
+usage() {
+    echo -e
+    echo -e "Usage: $APP [options]"
+    echo -e
+    echo -e "Selects which Ingress type to deploy. It defaults to deploying the nginx ingress"
+    echo -e
+    echo -e "Options:"
+    echo -e "  -t | --type <aks|nginx> If empty, defaults to nginx"
+    echo -e "  -h | --help displays usage information"
+    echo -e
+    exit 1
+}
+
 progress-bar() { # progress-bar: A very nice shell progress bar by https://github.com/edouard-lopez
   local duration=${1}
   already_done() { for ((done=0; done<$elapsed; done++)); do printf "▇"; done }
@@ -16,6 +32,28 @@ progress-bar() { # progress-bar: A very nice shell progress bar by https://githu
   done
   clean_line
 }
+
+while [[ $# -gt 0 ]]
+do
+    case $1 in
+        -t|--type)
+            K8S="$2"
+            shift
+            shift;;
+        -h|--help)
+            usage;;
+        *)
+            echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$1$reset_color"
+            usage;;
+    esac
+done
+
+if [[ "$K8S" != "aks" ]] && [[ "$K8S" != "nginx" ]]
+then
+    echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$K8S$reset_color"
+    echo -e "$fg_bold[yellow]Valid choices are one of aks or nginx$reset_color"
+    usage
+fi
 
 echo -e "\n$fg_bold[red]Creating taktzeit namespace$reset_color"
 kubectl apply -f taktzeit-namespace.yml
@@ -33,7 +71,8 @@ echo -e "\n$fg_bold[red]Sleeping 45 sec to allow for system stabilization$reset_
 progress-bar 45
 
 echo -e "\n$fg_bold[yellow]Deploy WORKER horizontal pod autoscaler? (y/n)$reset_color"
-read ANSWER
+read -r ANSWER
+
 if [[ $ANSWER = "y" ]]
 then
   echo -e "\n$fg_bold[red]Deploying WORKER horizontal pod autoscaler $reset_color"
@@ -47,5 +86,12 @@ kubectl apply -f api-cluster-ip.yml -f api-deployment.yml
 echo -e "\n$fg_bold[red]Deploying CLIENT service$reset_color"
 kubectl apply -f client-cluster-ip.yml -f client-deployment.yml
 echo -e "\n$fg_bold[red]Deploying ingress service$reset_color"
-kubectl apply -f ingress-service.yml
+
+if [[ "$K8S" == "aks" ]]
+then
+    kubectl apply -f aks-ingress-service.yml
+else
+    kubectl apply -f nginx-ingress-service.yml
+fi
+
 echo -e "\n$fg_bold[red]Finished deploying cloud native system$reset_color\n"

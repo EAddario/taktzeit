@@ -1,8 +1,54 @@
 #!/bin/zsh
 autoload colors
 colors
+
+APP=$0
+K8S="nginx"
+
+usage() {
+    echo -e
+    echo -e "Usage: $APP [options]"
+    echo -e
+    echo -e "Selects which Ingress type to delete. It defaults to deleting the nginx ingress"
+    echo -e
+    echo -e "Options:"
+    echo -e "  -t | --type <aks|nginx> If empty, defaults to nginx"
+    echo -e "  -h | --help displays usage information"
+    echo -e
+    exit 1
+}
+
+while [[ $# -gt 0 ]]
+do
+    case $1 in
+        -t|--type)
+            K8S="$2"
+            shift
+            shift;;
+        -h|--help)
+            usage;;
+        *)
+            echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$1$reset_color"
+            usage;;
+    esac
+done
+
+if [[ "$K8S" != "aks" ]] && [[ "$K8S" != "nginx" ]]
+then
+    echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$K8S$reset_color"
+    echo -e "$fg_bold[yellow]Valid choices are one of aks or nginx$reset_color"
+    usage
+fi
+
 echo -e "\n$fg_bold[red]Deleting ingress service$reset_color"
-kubectl delete -f ingress-service.yml
+
+if [[ "$K8S" == "aks" ]]
+then
+    kubectl delete -f aks-ingress-service.yml
+else
+    kubectl delete -f nginx-ingress-service.yml
+fi
+
 echo -e "\n$fg_bold[red]Deleting CLIENT service$reset_color"
 kubectl delete -f client-cluster-ip.yml -f client-deployment.yml
 echo -e "\n$fg_bold[red]Deleting API service$reset_color"
