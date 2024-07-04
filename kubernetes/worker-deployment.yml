@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
       - name: worker
-        image: edaddario/worker
+        image: index.docker.io/edaddario/worker:latest
+        imagePullPolicy: Always
         env:
           - name: RABBITMQ_HOST
             value: rabbitmq-cluster-ip

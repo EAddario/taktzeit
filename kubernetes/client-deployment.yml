@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
       - name: client
-        image: edaddario/client
+        image: index.docker.io/edaddario/client:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3010
         resources:

@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
       - name: api
-        image: edaddario/api
+        image: index.docker.io/edaddario/api:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5010
         env:
