@@ -7,6 +7,7 @@ metadata:
   namespace: taktzeit
   annotations:
     ingressclass.kubernetes.io/is-default-class: "true"
+    kubectl.kubernetes.io/last-applied-configuration: ""
 spec:
   controller: k8s.io/ingress-nginx
 
@@ -20,6 +21,7 @@ metadata:
     app: ingress
     version: 1.0.0
   annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
