@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: taktzeit-ingress-service-rules
+  namespace: taktzeit
+  annotations:
+    appgw.ingress.kubernetes.io/backend-hostname: "taktzeit.io"
+spec:
+  ingressClassName: azure-application-gateway
+  defaultBackend:
+    service:
+      name: client-cluster-ip
+      port:
+        number: 3010
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: client-cluster-ip
+                port:
+                  number: 3010
+          - path: /api/
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: api-cluster-ip
+                port:
+                  number: 5010
