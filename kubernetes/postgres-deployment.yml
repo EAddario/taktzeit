@@ -24,7 +24,8 @@ spec:
             claimName: database-pvc
       containers:
         - name: postgres
-          image: postgres:16.3-alpine3.20
+          image: index.docker.io/postgres:16.3-alpine3.20
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432
           volumeMounts:
@@ -40,7 +41,7 @@ spec:
           resources:
             limits:
               memory: 96Mi
-              cpu: 500m
+              cpu: 750m
             requests:
               memory: 64Mi
-              cpu: 50m
+              cpu: 75m

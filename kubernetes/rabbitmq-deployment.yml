@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
         - name: rabbitmq
-          image: rabbitmq:3.13.3-alpine
+          image: index.docker.io/rabbitmq:3.13.3-alpine
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5672
           env:
@@ -29,7 +30,7 @@ spec:
           resources:
             limits:
               memory: 200Mi
-              cpu: 500m
+              cpu: 1000m
             requests:
               memory: 144Mi
-              cpu: 50m
+              cpu: 100m

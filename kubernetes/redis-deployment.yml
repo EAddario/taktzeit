@@ -20,7 +20,8 @@ spec:
     spec:
       containers:
         - name: redis
-          image: redis:7.2.5-alpine
+          image: index.docker.io/redis:7.2.5-alpine
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 6379
           resources:
