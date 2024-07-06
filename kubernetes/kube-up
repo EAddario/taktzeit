@@ -57,6 +57,7 @@ fi
 
 echo -e "\n$fg_bold[red]Creating taktzeit namespace$reset_color"
 kubectl apply -f taktzeit-namespace.yml
+kubectl label namespace taktzeit istio-injection=enabled
 echo -e "\n$fg_bold[red]Deploying Secrets$reset_color"
 kubectl apply -f secrets-vault.yml
 echo -e "\n$fg_bold[red]Deploying RabbitMQ$reset_color"
