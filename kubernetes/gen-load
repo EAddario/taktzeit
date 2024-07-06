@@ -2,27 +2,87 @@
 autoload colors
 colors
 
-if [ $# -ne 3 ]
+APP=$0
+OPTION="rep"
+ITERATIONS=50
+VALUE=10
+PAUSE=0
+
+usage() {
+    echo -e
+    echo -e "Usage: $APP [options]"
+    echo -e
+    echo -e "Generates a test load for the Takzeit system"
+    echo -e
+    echo -e "Two modes of operation are available: rep and seq"
+    echo -e "   rep: Repeats the same value for each POST call. Defaults are $ITERATIONS iterations with value $VALUE"
+    echo -e "   seq: Cycles a number of times (default is $ITERATIONS) through a sequence from 0 to $(($VALUE - 1)) (value - 1)"
+    echo -e
+    echo -e "Options:"
+    echo -e "  -o | --option <rep|seq> If empty, defaults to rep"
+    echo -e "  -i | --iterations <integer> If empty, defaults to $ITERATIONS"
+    echo -e "  -v | --value <integer> If empty, defaults to $VALUE"
+    echo -e "  -p | --pause <milliseconds> If empty, defaults to $PAUSE milliseconds"
+    echo -e "  -h | --help displays usage information"
+    echo -e
+    exit 1
+}
+
+while [[ $# -gt 0 ]]
+do
+  case $1 in
+    -o|--option)
+      OPTION="$2"
+      shift
+      shift;;
+    -i | --iterations)
+      ITERATIONS="$2"
+      shift
+      shift;;
+    -v | --value)
+      VALUE="$2"
+      shift
+      shift;;
+    -p | --pause)
+      PAUSE=$(echo "scale=2; $2 / 1000" | bc -l)
+      shift
+      shift;;
+    -h|--help)
+      usage;;
+    *)
+      echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$1$reset_color"
+      usage;;
+  esac
+done
+
+if [[ "$OPTION" != "rep" ]] && [[ "$OPTION" != "seq" ]]
 then
-    echo "$fg_bold[red]gen-load: Generates a test load$reset_color"
-    echo "$fg_bold[red]Usage: gen-load [type] [iterations] [range]$reset_color"
-    echo
-    echo "$fg_bold[red]Example:$reset_color"
-    echo "$fg_bold[red]gen-load seq 50 10 $reset_color"
-    echo "$fg_bold[red]Generates 50 POST calls with sequential values (iteration modulus 10)$reset_color"
-    echo
-    echo "$fg_bold[red]gen-load rep 50 0$reset_color"
-    echo "$fg_bold[red]Generates 50 POST calls repeating value 0$reset_color"
-else
-    case $1 in
-        seq)
-            for i in {1..$2}; do echo "$fg_bold[red]Request $i$reset_color"; curl --request POST 'localhost/api/values' --header 'Content-Type: application/json' --data-raw '{"index":"'$(($i % $3))'"}'; echo " ("$(($i % $3))")"; done
-            ;;
-        rep)
-            for i in {1..$2}; do echo "$fg_bold[red]Request $i$reset_color"; curl --request POST 'localhost/api/values' --header 'Content-Type: application/json' --data-raw '{"index":"'$3'"}'; echo " ("$3")"; done
-            ;;
-        *)
-            echo "$fg_bold[red]Error: type must be one of ok or nok$reset_color"
-            ;;
-    esac
+  echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$OPTION$reset_color"
+  echo -e "$fg_bold[yellow]Valid choices are one of rep or seq$reset_color"
+  usage
 fi
+
+case $OPTION in
+  "seq")
+    echo "$fg_bold[yellow]Sequence: iterating $ITERATIONS times values 0..$(($VALUE - 1)) with $PAUSE seconds pause$reset_color"
+    for i in {1..$ITERATIONS}
+    do
+      echo "$fg_bold[red]Request $i$reset_color"
+      curl --request POST 'localhost/api/values' --header 'Content-Type: application/json' --data-raw '{"index":"'$(($i % $VALUE))'"}'; echo " ("$(($i % $VALUE))")"
+      sleep $PAUSE
+    done
+    ;;
+  "rep")
+    echo "$fg_bold[yellow]Repeat: issuing $ITERATIONS request(s) for value $VALUE with $PAUSE seconds pause$reset_color"
+    for i in {1..$ITERATIONS}
+    do
+      echo "$fg_bold[red]Request $i$reset_color"
+      curl --request POST 'localhost/api/values' --header 'Content-Type: application/json' --data-raw '{"index":"'$VALUE'"}'; echo " ("$VALUE")"
+      sleep $PAUSE
+    done
+    ;;
+  *)
+    echo "$fg_bold[red]Error: Invalid option $OPTION$reset_color"
+    usage
+    ;;
+esac
