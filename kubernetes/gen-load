@@ -3,10 +3,11 @@ autoload colors
 colors
 
 APP=$0
-OPTION="rep"
+HOST="localhost"
 ITERATIONS=50
-VALUE=10
+OPTION="rep"
 PAUSE=0
+VALUE=10
 
 usage() {
     echo -e
@@ -19,11 +20,12 @@ usage() {
     echo -e "   seq: Cycles a number of times (default is $ITERATIONS) through a sequence from 0 to $(($VALUE - 1)) (value - 1)"
     echo -e
     echo -e "Options:"
-    echo -e "  -o | --option <rep|seq> If empty, defaults to rep"
-    echo -e "  -i | --iterations <integer> If empty, defaults to $ITERATIONS"
-    echo -e "  -v | --value <integer> If empty, defaults to $VALUE"
-    echo -e "  -p | --pause <milliseconds> If empty, defaults to $PAUSE milliseconds"
     echo -e "  -h | --help displays usage information"
+    echo -e "  -i | --iterations <integer> If empty, defaults to $ITERATIONS"
+    echo -e "  -o | --option <rep|seq> If empty, defaults to rep"
+    echo -e "  -p | --pause <milliseconds> If empty, defaults to $PAUSE milliseconds"
+    echo -e "  -s | --server <domain|ip> If empty, defaults to localhost"
+    echo -e "  -v | --value <integer> If empty, defaults to $VALUE"
     echo -e
     exit 1
 }
@@ -31,24 +33,28 @@ usage() {
 while [[ $# -gt 0 ]]
 do
   case $1 in
-    -o|--option)
+    -h | --help)
+          usage;;
+    -i | --iterations)
+          ITERATIONS="$2"
+          shift
+          shift;;
+    -o | --option)
       OPTION="$2"
       shift
       shift;;
-    -i | --iterations)
-      ITERATIONS="$2"
-      shift
-      shift;;
+    -p | --pause)
+          PAUSE=$(echo "scale=2; $2 / 1000" | bc -l)
+          shift
+          shift;;
+    -s | --server)
+          HOST="$2"
+          shift
+          shift;;
     -v | --value)
       VALUE="$2"
       shift
       shift;;
-    -p | --pause)
-      PAUSE=$(echo "scale=2; $2 / 1000" | bc -l)
-      shift
-      shift;;
-    -h|--help)
-      usage;;
     *)
       echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$1$reset_color"
       usage;;
@@ -68,7 +74,7 @@ case $OPTION in
     for i in {1..$ITERATIONS}
     do
       echo "$fg_bold[red]Request $i$reset_color"
-      curl --request POST 'localhost/api/values' --header 'Content-Type: application/json' --data-raw '{"index":"'$(($i % $VALUE))'"}'; echo " ("$(($i % $VALUE))")"
+      curl --request POST "$HOST/api/values" --header 'Content-Type: application/json' --data-raw '{"index":"'$(($i % $VALUE))'"}'; echo " ("$(($i % $VALUE))")"
       sleep $PAUSE
     done
     ;;
@@ -77,7 +83,7 @@ case $OPTION in
     for i in {1..$ITERATIONS}
     do
       echo "$fg_bold[red]Request $i$reset_color"
-      curl --request POST 'localhost/api/values' --header 'Content-Type: application/json' --data-raw '{"index":"'$VALUE'"}'; echo " ("$VALUE")"
+      curl --request POST "$HOST/api/values" --header 'Content-Type: application/json' --data-raw '{"index":"'$VALUE'"}'; echo " ("$VALUE")"
       sleep $PAUSE
     done
     ;;
