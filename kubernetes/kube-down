@@ -3,51 +3,60 @@ autoload colors
 colors
 
 APP=$0
-K8S="nginx"
+K8S="std"
 
 usage() {
-    echo -e
-    echo -e "Usage: $APP [options]"
-    echo -e
-    echo -e "Selects which Ingress type to delete. It defaults to deleting the nginx ingress"
-    echo -e
-    echo -e "Options:"
-    echo -e "  -t | --type <aks|nginx> If empty, defaults to nginx"
-    echo -e "  -h | --help displays usage information"
-    echo -e
-    exit 1
+  echo -e
+  echo -e "Usage: $APP [options]"
+  echo -e
+  echo -e "Deletes Taktzeit from the selected Kubernetes cluster. Three types are supported:"
+  echo -e "  * AWS EKS (eks)"
+  echo -e "  * Azure AKS (aks)"
+  echo -e "  * Standard (std)"
+  echo -e
+  echo -e "Defaults to the standard (local) Kubernetes cluster if no type is chosen"
+  echo -e
+  echo -e "Options:"
+  echo -e "  -t | --type <aks|eks|std> If empty, defaults to std"
+  echo -e "  -h | --help displays usage information"
+  echo -e
+  exit 1
 }
 
 while [[ $# -gt 0 ]]
 do
-    case $1 in
-        -t|--type)
-            K8S="$2"
-            shift
-            shift;;
-        -h|--help)
-            usage;;
-        *)
-            echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$1$reset_color"
-            usage;;
-    esac
+  case $1 in
+    -t|--type)
+      K8S="$2"
+      shift
+      shift;;
+    -h|--help)
+      usage;;
+    *)
+      echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$1$reset_color"
+      usage;;
+  esac
 done
 
-if [[ "$K8S" != "aks" ]] && [[ "$K8S" != "nginx" ]]
+if [[ $K8S != "aks" ]] && [[ $K8S != "eks" ]] && [[ $K8S != "std" ]]
 then
-    echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$K8S$reset_color"
-    echo -e "$fg_bold[yellow]Valid choices are one of aks or nginx$reset_color"
-    usage
+  echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$K8S$reset_color"
+  echo -e "$fg_bold[yellow]Valid choices are one of $fg_bold[green]aks$fg_bold[yellow], $fg_bold[green]eks$fg_bold[yellow] or $fg_bold[green]std$reset_color"
+  usage
 fi
 
 echo -e "\n$fg_bold[red]Deleting ingress service$reset_color"
-
-if [[ "$K8S" == "aks" ]]
-then
+case $K8S in
+  aks)
     kubectl delete -f aks-ingress-service.yml
-else
+    ;;
+  eks)
+    kubectl delete -f eks-ingress-service.yml
+    ;;
+  std)
     kubectl delete -f nginx-ingress-service.yml
-fi
+    ;;
+esac
 
 echo -e "\n$fg_bold[red]Deleting CLIENT service$reset_color"
 kubectl delete -f client-cluster-ip.yml -f client-deployment.yml
@@ -65,7 +74,12 @@ read ANSWER
 if [[ $ANSWER = "y" ]]
 then
   echo -e "\n$fg_bold[red]Deleting Peristent Volume Claim$reset_color"
-  kubectl delete -f database-pvc.yml
+  if [[ $K8S == "eks" ]]
+  then
+      kubectl delete -f eks-database-pvc.yml
+  else
+      kubectl delete -f database-pvc.yml
+  fi
 fi
 
 echo -e "\n$fg_bold[red]Deleting Redis$reset_color"
@@ -77,4 +91,4 @@ kubectl delete -f secrets-vault.yml
 echo -e "\n$fg_bold[red]Deleting taktzeit namespace$reset_color"
 kubectl label namespace taktzeit istio-injection-
 kubectl delete -f taktzeit-namespace.yml
-echo -e "\n$fg_bold[red]Finished destroying cloud native system$reset_color\n"
+echo -e "\n$fg_bold[red]Finished deleting Taktzeit$reset_color\n"

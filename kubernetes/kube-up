@@ -3,19 +3,24 @@ autoload colors
 colors
 
 APP=$0
-K8S="nginx"
+K8S="std"
 
 usage() {
-    echo -e
-    echo -e "Usage: $APP [options]"
-    echo -e
-    echo -e "Selects which Ingress type to deploy. It defaults to deploying the nginx ingress"
-    echo -e
-    echo -e "Options:"
-    echo -e "  -t | --type <aks|nginx> If empty, defaults to nginx"
-    echo -e "  -h | --help displays usage information"
-    echo -e
-    exit 1
+  echo -e
+  echo -e "Usage: $APP [options]"
+  echo -e
+  echo -e "Deploys Taktzeit on the selected Kubernetes cluster. Three types are supported:"
+  echo -e "  * AWS EKS (eks)"
+  echo -e "  * Azure AKS (aks)"
+  echo -e "  * Standard (std)"
+  echo -e
+  echo -e "Defaults to a standard (local) Kubernetes cluster deployment if no type is chosen"
+  echo -e
+  echo -e "Options:"
+  echo -e "  -t | --type <aks|eks|std> If empty, defaults to std"
+  echo -e "  -h | --help displays usage information"
+  echo -e
+  exit 1
 }
 
 progress-bar() { # progress-bar: A very nice shell progress bar by https://github.com/edouard-lopez
@@ -35,24 +40,24 @@ progress-bar() { # progress-bar: A very nice shell progress bar by https://githu
 
 while [[ $# -gt 0 ]]
 do
-    case $1 in
-        -t|--type)
-            K8S="$2"
-            shift
-            shift;;
-        -h|--help)
-            usage;;
-        *)
-            echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$1$reset_color"
-            usage;;
-    esac
+  case $1 in
+    -t|--type)
+      K8S="$2"
+      shift
+      shift;;
+    -h|--help)
+      usage;;
+    *)
+      echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$1$reset_color"
+      usage;;
+  esac
 done
 
-if [[ "$K8S" != "aks" ]] && [[ "$K8S" != "nginx" ]]
+if [[ $K8S != "aks" ]] && [[ $K8S != "eks" ]] && [[ $K8S != "std" ]]
 then
-    echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$K8S$reset_color"
-    echo -e "$fg_bold[yellow]Valid choices are one of aks or nginx$reset_color"
-    usage
+  echo -e "$fg_bold[red]Invalid option: $fg_bold[yellow]$K8S$reset_color"
+  echo -e "$fg_bold[yellow]Valid choices are one of $fg_bold[green]aks$fg_bold[yellow], $fg_bold[green]eks$fg_bold[yellow] or $fg_bold[green]std$reset_color"
+  usage
 fi
 
 echo -e "\n$fg_bold[red]Creating taktzeit namespace$reset_color"
@@ -64,8 +69,15 @@ echo -e "\n$fg_bold[red]Deploying RabbitMQ$reset_color"
 kubectl apply -f rabbitmq-cluster-ip.yml -f rabbitmq-deployment.yml
 echo -e "\n$fg_bold[red]Deploying Redis$reset_color"
 kubectl apply -f redis-cluster-ip.yml -f redis-deployment.yml
+
 echo -e "\n$fg_bold[red]Creating Peristent Volume Claim $reset_color"
-kubectl apply -f database-pvc.yml
+if [[ $K8S == "eks" ]]
+then
+  kubectl apply -f eks-database-pvc.yml
+else
+  kubectl apply -f database-pvc.yml
+fi
+
 echo -e "\n$fg_bold[red]Deploying Postgres$reset_color"
 kubectl apply -f postgres-cluster-ip.yml -f postgres-deployment.yml
 echo -e "\n$fg_bold[red]Sleeping 45 sec to allow for system stabilization$reset_color"
@@ -86,13 +98,18 @@ echo -e "\n$fg_bold[red]Deploying API service$reset_color"
 kubectl apply -f api-cluster-ip.yml -f api-deployment.yml
 echo -e "\n$fg_bold[red]Deploying CLIENT service$reset_color"
 kubectl apply -f client-cluster-ip.yml -f client-deployment.yml
+
 echo -e "\n$fg_bold[red]Deploying ingress service$reset_color"
-
-if [[ "$K8S" == "aks" ]]
-then
+case $K8S in
+  aks)
     kubectl apply -f aks-ingress-service.yml
-else
+    ;;
+  eks)
+    kubectl apply -f eks-ingress-service.yml
+    ;;
+  std)
     kubectl apply -f nginx-ingress-service.yml
-fi
+    ;;
+esac
 
-echo -e "\n$fg_bold[red]Finished deploying cloud native system$reset_color\n"
+echo -e "\n$fg_bold[red]Finished deploying Taktzeit$reset_color\n"
