@@ -11,3 +11,5 @@ RUN apk update && \
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/build /usr/share/nginx/html
 EXPOSE 3010
+
+HEALTHCHECK --interval=10s --timeout=10s --retries=4 --start-period=30s CMD ["/usr/bin/curl", "http://localhost:3010/health", "-f"]
