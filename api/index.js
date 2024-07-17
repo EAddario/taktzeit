@@ -1,6 +1,7 @@
 const config = require("./config")
 const log4js = require("log4js");
 const logger = log4js.getLogger();
+const port = 5010
 logger.level = "DEBUG";
 
 logger.info('API server initializing...')
@@ -52,10 +53,34 @@ rabbitBroker.create(config.RabbitMQ, (err, _rabbitClient) => {
     rabbitClient = _rabbitClient
 })
 
+function secondsToDhms(seconds) {
+    seconds = Number(seconds)
+    let d = Math.floor(seconds / (3600 * 24));
+    let h = Math.floor((seconds % (3600 * 24)) / 3600)
+    let m = Math.floor((seconds % 3600) / 60)
+    let s = Math.floor(seconds % 60)
+    let dDisplay = d > 0 ? d + (d === 1 ? " day, " : " days, ") : ""
+    let hDisplay = h > 0 ? h + (h === 1 ? " hour, " : " hours, ") : ""
+    let mDisplay = m > 0 ? m + (m === 1 ? " minute, " : " minutes, ") : ""
+    let sDisplay = s > 0 ? s + (s === 1 ? " second" : " seconds") : ""
+
+    return dDisplay + hDisplay + mDisplay + sDisplay
+}
+
 //Express route handlers
 app.get('/', (req, res) => {
     logger.debug('GET /')
     res.send('API Running...')
+});
+
+app.get('/health', (req, res) => {
+    const body = {
+        message: 'OK',
+        timestamp: new Date(Date.now()),
+        uptime: secondsToDhms(process.uptime())
+    }
+    logger.debug('GET /health', body)
+    res.send(body)
 });
 
 app.get('/values/all', async (req, res) => {
@@ -121,13 +146,11 @@ app.post('/values/reset', async () => {
 })
 
 //Express instantiation
-app.listen(5010, err => {
+app.listen(port, err => {
     if (err) {
         logger.fatal(`Exception creating API server: ${err.message}`)
         throw new Error(`Exception creating API server: ${err.message}`)
     }
 
-    logger.info('API server listening...')
+    logger.info(`API server ready and listening on port ${port}`)
 })
-
-logger.info('API server ready...')
