@@ -4,6 +4,9 @@ const Broker = require('rascal').Broker
 const log4js = require("log4js");
 const logger = log4js.getLogger();
 const { v4: uuidv4 } = require('uuid');
+const express = require("express")
+const app = express()
+const port = 80
 
 const instanceId = uuidv4()
 logger.level = "DEBUG";
@@ -96,3 +99,31 @@ Broker.create(config.RabbitMQ, (err, broker) => {
 })
 
 logger.info(`Worker ${instanceId} ready...`)
+
+function secondsToDhms(seconds) {
+    seconds = Number(seconds)
+    let d = Math.floor(seconds / (3600 * 24));
+    let h = Math.floor((seconds % (3600 * 24)) / 3600)
+    let m = Math.floor((seconds % 3600) / 60)
+    let s = Math.floor(seconds % 60)
+    let dDisplay = d > 0 ? d + (d === 1 ? " day, " : " days, ") : ""
+    let hDisplay = h > 0 ? h + (h === 1 ? " hour, " : " hours, ") : ""
+    let mDisplay = m > 0 ? m + (m === 1 ? " minute, " : " minutes, ") : ""
+    let sDisplay = s > 0 ? s + (s === 1 ? " second" : " seconds") : ""
+
+    return dDisplay + hDisplay + mDisplay + sDisplay
+}
+
+app.get('/health', (req, res) => {
+    const body = {
+        message: 'OK',
+        timestamp: new Date(Date.now()),
+        uptime: secondsToDhms(process.uptime())
+    }
+    logger.debug('GET /health', body)
+    res.send(body)
+});
+
+app.listen(port, () => {
+    logger.info(`Worker ${instanceId} ready and listening on port ${port}`)
+})

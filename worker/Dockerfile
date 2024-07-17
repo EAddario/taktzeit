@@ -7,4 +7,6 @@ FROM gcr.io/distroless/nodejs22-debian12
 COPY --from=builder /app /app
 WORKDIR /app
 
+HEALTHCHECK --interval=10s --timeout=10s --retries=4 --start-period=30s CMD ["/nodejs/bin/node", "healthcheck.js"]
+
 CMD ["index.js"]
