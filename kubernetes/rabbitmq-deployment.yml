@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: rabbitmq
-          image: index.docker.io/rabbitmq:3.13.3-alpine
+          image: index.docker.io/rabbitmq:3.13.4-alpine
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5672
