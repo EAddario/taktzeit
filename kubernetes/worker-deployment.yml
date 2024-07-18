@@ -40,8 +40,26 @@ spec:
             value: "6379"
         resources:
           limits:
-            memory: 56Mi
+            memory: 64Mi
             cpu: 500m
           requests:
-            memory: 40Mi
+            memory: 48Mi
             cpu: 50m
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 15
+          timeoutSeconds: 5
+          successThreshold: 2
+          failureThreshold: 4
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 8
