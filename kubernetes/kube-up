@@ -67,8 +67,14 @@ echo -e "\n$fg_bold[red]Deploying Secrets$reset_color"
 kubectl apply -f secrets-vault.yml
 echo -e "\n$fg_bold[red]Deploying RabbitMQ$reset_color"
 kubectl apply -f rabbitmq-cluster-ip.yml -f rabbitmq-deployment.yml
+
 echo -e "\n$fg_bold[red]Deploying Redis$reset_color"
-kubectl apply -f redis-cluster-ip.yml -f redis-deployment.yml
+if [[ $K8S == "aks" ]]
+then
+  kubectl apply -f redis-cluster-ip.yml -f aks-redis-deployment.yml
+else
+  kubectl apply -f redis-cluster-ip.yml -f redis-deployment.yml
+fi
 
 echo -e "\n$fg_bold[red]Creating Peristent Volume Claim $reset_color"
 if [[ $K8S == "eks" ]]
@@ -80,12 +86,11 @@ fi
 
 echo -e "\n$fg_bold[red]Deploying Postgres$reset_color"
 kubectl apply -f postgres-cluster-ip.yml -f postgres-deployment.yml
-echo -e "\n$fg_bold[red]Sleeping 45 sec to allow for system stabilization$reset_color"
-progress-bar 45
+echo -e "\n$fg_bold[red]Sleeping 60 sec to allow for system stabilization$reset_color"
+progress-bar 60
 
 echo -e "\n$fg_bold[yellow]Deploy WORKER horizontal pod autoscaler? (y/n)$reset_color"
 read -r ANSWER
-
 if [[ $ANSWER = "y" ]]
 then
   echo -e "\n$fg_bold[red]Deploying WORKER horizontal pod autoscaler $reset_color"

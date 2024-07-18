@@ -78,7 +78,13 @@ then
 fi
 
 echo -e "\n$fg_bold[red]Deleting Redis$reset_color"
-kubectl delete -f redis-cluster-ip.yml -f redis-deployment.yml
+if [[ $K8S == "aks" ]]
+then
+  kubectl delete -f redis-cluster-ip.yml -f aks-redis-deployment.yml
+else
+  kubectl delete -f redis-cluster-ip.yml -f redis-deployment.yml
+fi
+
 echo -e "\n$fg_bold[red]Deleting RabbitMQ$reset_color"
 kubectl delete -f rabbitmq-cluster-ip.yml -f rabbitmq-deployment.yml
 echo -e "\n$fg_bold[red]Deleting Secrets$reset_color"
@@ -86,4 +92,4 @@ kubectl delete -f secrets-vault.yml
 echo -e "\n$fg_bold[red]Deleting taktzeit namespace$reset_color"
 kubectl label namespace taktzeit istio-injection-
 kubectl delete -f taktzeit-namespace.yml
-echo -e "\n$fg_bold[red]Finished deleting Taktzeit$reset_color\n"
+echo -e "\n$fg_bold[red]Finished deleting taktzeit$reset_color\n"
