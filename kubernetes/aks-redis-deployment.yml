@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-deployment
+  namespace: taktzeit
+  labels:
+    app: cache
+    version: 1.0.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: cache
+  template:
+    metadata:
+      labels:
+        component: cache
+        app: cache
+        version: 1.0.0
+    spec:
+      containers:
+        - name: redis
+          image: index.docker.io/redis:7.2.5-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              memory: 12Mi
+              cpu: 500m
+            requests:
+              memory: 9Mi
+              cpu: 50m
+          # readiness and liveness probes using redis-cli fail for some reason in AKS
