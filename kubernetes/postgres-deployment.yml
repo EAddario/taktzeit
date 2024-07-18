@@ -45,3 +45,29 @@ spec:
             requests:
               memory: 64Mi
               cpu: 75m
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -d
+                - postgres
+                - -U
+                - postgres
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+            successThreshold: 2
+            failureThreshold: 4
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -d
+                - postgres
+                - -U
+                - postgres
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 8
