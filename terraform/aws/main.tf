@@ -45,7 +45,7 @@ resource "aws_launch_template" "eks_node_with_keypair" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.9.0"
+  version = "5.9.0"
 
   name = var.vpc_name
 
@@ -62,7 +62,7 @@ module "vpc" {
 
 module "irsa-ebs-csi" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.41.0"
+  version = "5.41.0"
 
   create_role           = true
   role_name             = "EKSEBSCSIRole-${var.cluster_name}"
@@ -78,7 +78,7 @@ module "irsa-ebs-csi" {
 
 module "irsa-vpc-cni" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-  version = "~> 5.41.0"
+  version = "5.41.0"
 
   create_role           = true
   role_name             = "EKSVPCCNIRole-${var.cluster_name}"
@@ -95,7 +95,7 @@ module "irsa-vpc-cni" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.17.2"
+  version = "20.19.0"
 
   cluster_name    = var.cluster_name
   cluster_version = var.kubernetes_version
