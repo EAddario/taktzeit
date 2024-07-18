@@ -19,33 +19,33 @@ spec:
         version: 1.0.0
     spec:
       containers:
-      - name: client
-        image: index.docker.io/edaddario/client:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 3010
-        resources:
-          limits:
-            memory: 8Mi
-            cpu: 250m
-          requests:
-            memory: 6Mi
-            cpu: 10m
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 3010
-          initialDelaySeconds: 15
-          periodSeconds: 15
-          timeoutSeconds: 5
-          successThreshold: 2
-          failureThreshold: 4
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 3010
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 8
+        - name: client
+          image: index.docker.io/edaddario/client:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3010
+          resources:
+            limits:
+              memory: 8Mi
+              cpu: 250m
+            requests:
+              memory: 6Mi
+              cpu: 10m
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3010
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+            successThreshold: 2
+            failureThreshold: 4
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3010
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 8

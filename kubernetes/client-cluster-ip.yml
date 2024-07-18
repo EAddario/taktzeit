@@ -11,6 +11,6 @@ spec:
   selector:
     component: client
   ports:
-  - port: 3010
-    name: http
-    targetPort: 3010
+    - port: 3010
+      name: http
+      targetPort: 3010

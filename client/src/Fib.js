@@ -79,13 +79,13 @@ class Fib extends Component {
                     <div className="ui segment">
                         <div className="ui grid">
                             <div className="eleven wide column">
-                                <div className="ui message" style= {{height: '300px', overflowY: 'auto'}}>
+                                <div className="ui message" style={{height: '300px', overflowY: 'auto'}}>
                                     <div className="header">Previous Numbers</div>
                                     <p>{this.renderSeenIndexes()}</p>
                                 </div>
                             </div>
                             <div className="five wide column">
-                                <div className="ui message" style= {{height: '300px', overflowY: 'auto'}}>
+                                <div className="ui message" style={{height: '300px', overflowY: 'auto'}}>
                                     <div className="header">Results</div>
                                     <p>{this.renderValues()}</p>
                                 </div>

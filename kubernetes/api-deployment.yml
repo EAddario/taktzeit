@@ -19,48 +19,48 @@ spec:
         version: 1.0.0
     spec:
       containers:
-      - name: api
-        image: index.docker.io/edaddario/api:latest
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 5010
-        env:
-          - name: RABBITMQ_HOST
-            value: rabbitmq-cluster-ip
-          - name: RABBITMQ_PORT
-            value: "5672"
-          - name: RABBITMQ_USER
-            value: guest
-          - name: RABBITMQ_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: vault
-                key: RABBITMQ_PASSWORD
-          - name: REDIS_HOST
-            value: redis-cluster-ip
-          - name: REDIS_PORT
-            value: "6379"
-          - name: POSTGRES_USER
-            value: postgres
-          - name: POSTGRES_HOST
-            value: postgres-cluster-ip
-          - name: POSTGRES_PORT
-            value: "5432"
-          - name: POSTGRES_DATABASE
-            value: postgres
-          - name: POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: vault
-                key: POSTGRES_PASSWORD
-        resources:
-          limits:
-            memory: 96Mi
-            cpu: 250m
-          requests:
-            memory: 64Mi
-            cpu: 10m
-        readinessProbe:
+        - name: api
+          image: index.docker.io/edaddario/api:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5010
+          env:
+            - name: RABBITMQ_HOST
+              value: rabbitmq-cluster-ip
+            - name: RABBITMQ_PORT
+              value: "5672"
+            - name: RABBITMQ_USER
+              value: guest
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vault
+                  key: RABBITMQ_PASSWORD
+            - name: REDIS_HOST
+              value: redis-cluster-ip
+            - name: REDIS_PORT
+              value: "6379"
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_HOST
+              value: postgres-cluster-ip
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DATABASE
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vault
+                  key: POSTGRES_PASSWORD
+          resources:
+            limits:
+              memory: 96Mi
+              cpu: 250m
+            requests:
+              memory: 64Mi
+              cpu: 10m
+          readinessProbe:
             httpGet:
               path: /health
               port: 5010
@@ -69,7 +69,7 @@ spec:
             timeoutSeconds: 5
             successThreshold: 2
             failureThreshold: 4
-        livenessProbe:
+          livenessProbe:
             httpGet:
               path: /health
               port: 5010

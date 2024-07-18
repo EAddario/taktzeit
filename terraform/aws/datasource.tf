@@ -23,7 +23,7 @@ data "aws_eks_cluster_auth" "cluster" {
 data "kubernetes_service" "nginx" {
   depends_on = [helm_release.nginx]
   metadata {
-    name = "ingress-nginx-controller"
+    name      = "ingress-nginx-controller"
     namespace = "ingress-nginx"
   }
 }

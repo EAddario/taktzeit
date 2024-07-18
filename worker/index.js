@@ -3,7 +3,7 @@ const redis = require('redis')
 const Broker = require('rascal').Broker
 const log4js = require("log4js");
 const logger = log4js.getLogger();
-const { v4: uuidv4 } = require('uuid');
+const {v4: uuidv4} = require('uuid');
 const express = require("express")
 const app = express()
 const port = 80
@@ -13,11 +13,12 @@ logger.level = "DEBUG";
 logger.info(`Worker ${instanceId} initializing...`)
 
 const redisClient = redis.createClient({
-    socket:{
+    socket: {
         host: config.Redis.Host,
         port: config.Redis.Port,
         reconnectStrategy: () => 1000
-    }})
+    }
+})
 
 redisClient.connect()
     .then(() => logger.info("Connected to Redis"))
@@ -65,15 +66,15 @@ Broker.create(config.RabbitMQ, (err, broker) => {
             })
     });
 
-    broker.on('vhost_initialised', ({ vhost, connectionUrl }) => {
+    broker.on('vhost_initialised', ({vhost, connectionUrl}) => {
         logger.warn(`Vhost ${vhost} was initialised using connection ${connectionUrl}`);
     })
 
-    broker.on('blocked', (reason, { vhost, connectionUrl }) => {
+    broker.on('blocked', (reason, {vhost, connectionUrl}) => {
         logger.warn(`Vhost ${vhost} was blocked on connection ${connectionUrl}. Reason: ${reason}`);
     })
 
-    broker.on('unblocked', ({ vhost, connectionUrl }) => {
+    broker.on('unblocked', ({vhost, connectionUrl}) => {
         logger.warn(`Vhost: ${vhost} was unblocked on connection: ${connectionUrl}`);
     })
 

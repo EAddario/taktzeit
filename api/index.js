@@ -31,11 +31,12 @@ pgClient.query('CREATE TABLE IF NOT EXISTS values (number INT)')
 //Redis client setup
 const redis = require("redis")
 const redisClient = redis.createClient({
-    socket:{
+    socket: {
         host: config.Redis.Host,
         port: config.Redis.Port,
         reconnectStrategy: () => 1000
-    }})
+    }
+})
 
 redisClient.connect()
     .then(() => logger.info("Connected to Redis"))
@@ -92,7 +93,9 @@ app.get('/values/all', async (req, res) => {
 app.get('/values/current', async (req, res) => {
     logger.debug('GET /values/current')
     redisClient.hGetAll('values')
-        .then(values => {res.send(values)})
+        .then(values => {
+            res.send(values)
+        })
         .catch(err => logger.fatal(err))
 })
 

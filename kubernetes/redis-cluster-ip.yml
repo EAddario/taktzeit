@@ -11,6 +11,6 @@ spec:
   selector:
     component: cache
   ports:
-  - port: 6379
-    name: tcp
-    targetPort: 6379
+    - port: 6379
+      name: tcp
+      targetPort: 6379
