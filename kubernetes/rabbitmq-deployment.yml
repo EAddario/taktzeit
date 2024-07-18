@@ -34,3 +34,27 @@ spec:
             requests:
               memory: 144Mi
               cpu: 100m
+          readinessProbe:
+            exec:
+              command:
+                - nc
+                - -z
+                - localhost
+                - '5672'
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+            successThreshold: 2
+            failureThreshold: 4
+          livenessProbe:
+            exec:
+              command:
+                - nc
+                - -z
+                - localhost
+                - '5672'
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 8
