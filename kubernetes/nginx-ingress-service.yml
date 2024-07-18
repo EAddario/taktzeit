@@ -32,8 +32,7 @@ spec:
       port:
         number: 80
   rules:
-    - host: localhost
-      http:
+    - http:
         paths:
           - path: /?(.*)
             backend:

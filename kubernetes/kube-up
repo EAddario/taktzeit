@@ -99,17 +99,12 @@ kubectl apply -f api-cluster-ip.yml -f api-deployment.yml
 echo -e "\n$fg_bold[red]Deploying CLIENT service$reset_color"
 kubectl apply -f client-cluster-ip.yml -f client-deployment.yml
 
-echo -e "\n$fg_bold[red]Deploying ingress service$reset_color"
-case $K8S in
-  aks)
-    kubectl apply -f aks-ingress-service.yml
-    ;;
-  eks)
-    kubectl apply -f eks-ingress-service.yml
-    ;;
-  std)
-    kubectl apply -f nginx-ingress-service.yml
-    ;;
-esac
+echo -e "\n$fg_bold[red]Deploying Ingress service$reset_color"
+if [[ $K8S == "aks" ]]
+then
+  kubectl apply -f aks-ingress-service.yml
+else
+  kubectl apply -f nginx-ingress-service.yml
+fi
 
-echo -e "\n$fg_bold[red]Finished deploying Taktzeit$reset_color\n"
+echo -e "\n$fg_bold[red]Finished deploying taktzeit$reset_color\n"
