@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: erised-deployment
+  namespace: taktzeit
+  labels:
+    app: erised
+    version: 1.0.0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: erised
+  template:
+    metadata:
+      labels:
+        component: erised
+        app: erised
+        version: 1.0.0
+    spec:
+      containers:
+        - name: erised
+          image: index.docker.io/edaddario/erised:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4010
+          resources:
+            limits:
+              memory: 30Mi
+              cpu: 20m
+            requests:
+              memory: 15Mi
+              cpu: 10m
+          readinessProbe:
+            httpGet:
+              path: /erised/info
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 15
+            timeoutSeconds: 5
+            successThreshold: 2
+            failureThreshold: 4
+          livenessProbe:
+            httpGet:
+              path: /erised/info
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 8
