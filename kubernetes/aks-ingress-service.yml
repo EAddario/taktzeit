@@ -27,6 +27,13 @@ spec:
                 port:
                   number: 3010
             pathType: ImplementationSpecific
+          - path: /echo/?(.*)
+            backend:
+              service:
+                name: erised-cluster-ip
+                port:
+                  number: 4010
+            pathType: ImplementationSpecific
           - path: /api/?(.*)
             backend:
               service:

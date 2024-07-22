@@ -53,6 +53,8 @@ else
   kubectl delete -f nginx-ingress-service.yml
 fi
 
+echo -e "\n$fg_bold[red]Deleting ERISED service$reset_color"
+kubectl delete -f erised-cluster-ip.yml -f erised-deployment.yml
 echo -e "\n$fg_bold[red]Deleting CLIENT service$reset_color"
 kubectl delete -f client-cluster-ip.yml -f client-deployment.yml
 echo -e "\n$fg_bold[red]Deleting API service$reset_color"

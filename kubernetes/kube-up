@@ -103,6 +103,8 @@ echo -e "\n$fg_bold[red]Deploying API service$reset_color"
 kubectl apply -f api-cluster-ip.yml -f api-deployment.yml
 echo -e "\n$fg_bold[red]Deploying CLIENT service$reset_color"
 kubectl apply -f client-cluster-ip.yml -f client-deployment.yml
+echo -e "\n$fg_bold[red]Deploying ERISED service$reset_color"
+kubectl apply -f erised-cluster-ip.yml -f erised-deployment.yml
 
 echo -e "\n$fg_bold[red]Deploying Ingress service$reset_color"
 if [[ $K8S == "aks" ]]
