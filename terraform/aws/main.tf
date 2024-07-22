@@ -133,8 +133,9 @@ module "eks" {
     }
   }
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
+  vpc_id                               = module.vpc.vpc_id
+  subnet_ids                           = module.vpc.private_subnets
+  cluster_endpoint_public_access_cidrs = var.authorized_ip_ranges
 
   eks_managed_node_group_defaults = {
     ami_type                = var.ami_type

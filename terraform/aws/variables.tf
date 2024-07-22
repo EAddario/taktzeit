@@ -3,6 +3,11 @@ variable "ami_type" {
   default = "AL2023_ARM_64_STANDARD"
 }
 
+variable "authorized_ip_ranges" {
+  type    = list(string)
+  default = ["0.0.0.0/0"]
+}
+
 variable "cluster_name" {
   type    = string
   default = "taktzeit"
