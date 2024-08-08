@@ -18,26 +18,35 @@ resource "aws_key_pair" "ssh_pubkey" {
   public_key = file(var.ssh_pubkey)
 }
 
-resource "aws_launch_template" "eks_node_with_keypair" {
-  instance_type = var.vm_size
-  key_name      = aws_key_pair.ssh_pubkey.key_name
+resource "aws_security_group" "allow_ssh" {
+  name = var.node_security_group
+
+  vpc_id = module.vpc.vpc_id
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    #cidr_blocks = var.authorized_ip_ranges
+    cidr_blocks = module.vpc.public_subnets
+  }
 }
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.9.0"
 
-  name = var.vpc_name
-
-  azs  = slice(data.aws_availability_zones.available.names, 0, 3)
-  cidr = "192.168.0.0/16"
-
-  public_subnets  = ["192.168.0.0/19", "192.168.32.0/19", "192.168.64.0/19"]
-  private_subnets = ["192.168.96.0/19", "192.168.128.0/19", "192.168.160.0/19"]
-
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
-  enable_dns_hostnames = true
+  name                    = var.vpc_name
+  azs                     = slice(data.aws_availability_zones.available.names, 0, 3)
+  cidr                    = "192.168.0.0/16"
+  public_subnets          = ["192.168.0.0/19", "192.168.32.0/19", "192.168.64.0/19"]
+  private_subnets         = ["192.168.96.0/19", "192.168.128.0/19", "192.168.160.0/19"]
+  enable_nat_gateway      = true
+  single_nat_gateway      = true
+  enable_dns_hostnames    = true
+  enable_dns_support      = true
+  map_public_ip_on_launch = true
 }
 
 module "irsa-ebs-csi" {
@@ -77,9 +86,8 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "20.19.0"
 
-  cluster_name    = var.cluster_name
-  cluster_version = var.kubernetes_version
-
+  cluster_name                             = var.cluster_name
+  cluster_version                          = var.kubernetes_version
   cluster_endpoint_public_access           = true
   enable_cluster_creator_admin_permissions = true
 
@@ -113,15 +121,16 @@ module "eks" {
     }
   }
 
-  vpc_id                               = module.vpc.vpc_id
+  vpc_id = module.vpc.vpc_id
   subnet_ids                           = module.vpc.private_subnets
+  #subnet_ids                           = module.vpc.public_subnets
   cluster_endpoint_public_access_cidrs = var.authorized_ip_ranges
 
   eks_managed_node_group_defaults = {
-    ami_type                = var.ami_type
-    instance_types          = [var.vm_size]
-    launch_template_id      = aws_launch_template.eks_node_with_keypair.id
-    launch_template_version = aws_launch_template.eks_node_with_keypair.latest_version
+    ami_type                       = var.ami_type
+    use_latest_ami_release_version = true
+    cluster_version                = var.kubernetes_version
+    instance_types                 = [var.vm_size]
 
     block_device_mappings = {
       xvda = {
@@ -140,11 +149,13 @@ module "eks" {
 
   eks_managed_node_groups = {
     worker = {
-      name = "worker-group"
-
-      min_size     = 2
-      desired_size = 4
-      max_size     = 6
+      name                   = "worker-group"
+      min_size               = 2
+      desired_size           = 3
+      max_size               = 4
+      #public_ip              = true
+      key_name               = aws_key_pair.ssh_pubkey.key_name
+      vpc_security_group_ids = [aws_security_group.allow_ssh.id]
     }
   }
 }

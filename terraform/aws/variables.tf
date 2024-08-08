@@ -18,6 +18,11 @@ variable "kubernetes_version" {
   default = "1.30"
 }
 
+variable "node_security_group" {
+  type    = string
+  default = "allow_ssh"
+}
+
 variable "profile" {
   type    = string
   default = "default"
@@ -26,6 +31,11 @@ variable "profile" {
 variable "region" {
   type    = string
   default = "eu-west-2"
+}
+
+variable "ssh_keyname" {
+  type    = string
+  default = "ssh_key"
 }
 
 variable "ssh_pubkey" {
