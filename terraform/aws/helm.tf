@@ -35,15 +35,25 @@ resource "helm_release" "nginx" {
   create_namespace = true
   repository       = "https://kubernetes.github.io/ingress-nginx"
   chart            = "ingress-nginx"
-  version          = "4.11.0"
+  version          = "4.11.1"
 
   set {
-    name  = "controller.service.annotations.service.beta.kubernetes.io/aws-load-balancer-type"
+    name  = "controller.service.annotations.service.beta.kubernetes\\.io/aws-load-balancer-type"
     value = "nlb"
   }
 
   set {
-    name  = "externalTrafficPolicy"
+    name  = "controller.service.annotations.service.beta.kubernetes\\.io/aws-load-balancer-backend-protocol"
+    value = "tcp"
+  }
+
+  set {
+    name  = "controller.service.annotations.service.beta.kubernetes\\.io/aws-load-balancer-cross-zone-load-balancing-enabled"
+    value = "true"
+  }
+
+  set {
+    name  = "controller.service.externalTrafficPolicy"
     value = "Local"
   }
 }
